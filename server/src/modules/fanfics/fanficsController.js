@@ -22,7 +22,7 @@ export const getAllFanfics = async (req, res, next) => {
 
 export const getFanficById = async (req, res, next) => {
     try{
-        const fanficId = Number(req.params.id);
+        const fanficId = Number(req.params.fanficId);
         const data = await fanficsService.getFanficById(fanficId);
         return res.json(data);
     }
@@ -50,7 +50,7 @@ export const searchFanfics = async (req, res, next) => {
 
 export const patchFanfic = async (req, res, next) => {
     try{
-        const fanficId = Number(req.params.id);
+        const fanficId = Number(req.params.fanficId);
         const userId = req.user.id;
         const data = await fanficsService.patchFanfic(fanficId, userId, req.body);
         return res.json(data);
@@ -62,7 +62,7 @@ export const patchFanfic = async (req, res, next) => {
 
 export const deleteFanfic = async (req, res, next) => {
     try{
-        const fanficId = Number(req.params.id);
+        const fanficId = Number(req.params.fanficId);
         const userId = req.user.id;
         const data = await fanficsService.deleteFanfic(fanficId, userId);
         res.json(data);
