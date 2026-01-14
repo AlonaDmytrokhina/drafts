@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as chaptersController from "./chaptersController.js";
+import commentsRoutes from "../comments/commentsRoutes.js";
 import { authMiddleware } from "../../middleware/authMiddleware.js";
 
 const router = Router({ mergeParams: true });
@@ -11,5 +12,7 @@ router.post('/', authMiddleware, chaptersController.createChapter);
 //router.patch('/:chapterId', authMiddleware, chaptersController.patchChapter);
 router.delete('/:chapterId', authMiddleware, chaptersController.deleteChapterById);
 router.delete('/', authMiddleware, chaptersController.deleteLastChapter);
+
+router.use('/:chapterId/comments', commentsRoutes);
 
 export default router;
