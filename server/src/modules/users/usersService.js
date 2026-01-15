@@ -1,5 +1,5 @@
 import * as usersRepository from "./usersRepository.js";
-import * as patchUtils from "../../utils/patchUtils.js";
+import * as patchUtils from "../fanfics/fanficsUtils.js";
 
 const usedFields = ['username', 'bio', 'avatar_url'];
 

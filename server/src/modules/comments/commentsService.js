@@ -1,5 +1,4 @@
 import * as commentsRepository from "./commentsRepository.js";
-import * as fanficsRepository from "../fanfics/fanficsRepository.js";
 
 export const createComment = async (content, chapterId, userId) => {
     if(!content){

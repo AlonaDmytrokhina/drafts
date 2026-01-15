@@ -1,5 +1,5 @@
 import * as fanficsRepository from "./fanficsRepository.js";
-import * as patchUtils from "../../utils/patchUtils.js";
+import * as patchUtils from "./fanficsUtils.js";
 const usedFields = ['title', 'summary', 'image_url', 'words_count', 'rating', 'status', 'warnings'];
 
 export const createFanfic = async (data, userId) => {

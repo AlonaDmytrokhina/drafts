@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as fanficsController from "./fanficsController.js";
 import chaptersRoutes from "../chapters/chaptersRoutes.js";
+import fanficsTagsRoutes from "../fanficsTags/fanficsTagsRoutes.js";
 import { authMiddleware } from "../../middleware/authMiddleware.js";
 
 const router = Router();
@@ -13,5 +14,7 @@ router.patch('/:fanficId', authMiddleware, fanficsController.patchFanfic);
 router.delete('/:fanficId', authMiddleware, fanficsController.deleteFanfic);
 
 router.use('/:fanficId/chapters', chaptersRoutes);
+
+router.use('/:fanficId/tags', fanficsTagsRoutes);
 
 export default router;
