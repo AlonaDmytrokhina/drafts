@@ -67,50 +67,6 @@ export const getFanficById = async (id) => {
     return rows[0] || null;
 }
 
-export const searchFanfics = async (q) => {
-    const query = `
-        SELECT *
-        FROM (
-                 SELECT DISTINCT ON (id)
-                     id,
-                     title,
-                     summary,
-                     created_at,
-                     updated_at,
-                     priority
-                 FROM (
-                     SELECT
-                     f.id,
-                     f.title,
-                     f.summary,
-                     f.created_at,
-                     f.updated_at,
-                     1 AS priority
-                     FROM fanfics f
-                     WHERE f.title ILIKE '%' || $1 || '%'
-
-                     UNION ALL
-
-                     SELECT
-                     f.id,
-                     f.title,
-                     f.summary,
-                     f.created_at,
-                     f.updated_at,
-                     2 AS priority
-                     FROM fanfics f
-                     JOIN users u ON u.id = f.author_id
-                     WHERE u.username ILIKE '%' || $1 || '%'
-                     ) combined
-                 ORDER BY id, priority, updated_at DESC
-             ) ranked
-        ORDER BY priority, updated_at DESC;
-    `;
-
-    const { rows } = await pool.query(query, [q]);
-    return rows;
-};
-
 export const patchFanfic = async ({fields, values, index, fanficId}) => {
     const query = `
         UPDATE fanfics
@@ -136,3 +92,15 @@ export const deleteFanficById = async (id) => {
     const { deletion } = await pool.query(query, [id]);
     return deletion;
 }
+
+export const getAllFanficLikesCount = async (fanficId) => {
+    const query = `
+        SELECT COUNT(*)::int AS likes_count
+        FROM likes
+        WHERE fanfic_id = $1
+    `;
+
+    const { rows } = await pool.query(query, [fanficId]);
+    return rows[0].likes_count;
+};
+

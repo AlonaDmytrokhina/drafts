@@ -1,4 +1,5 @@
 import * as fanficsRepository from "./fanficsRepository.js";
+import * as fanficsSearchRepository from "./fanficsSearchRepository.js";
 import * as patchUtils from "./fanficsUtils.js";
 const usedFields = ['title', 'summary', 'image_url', 'words_count', 'rating', 'status', 'warnings'];
 
@@ -21,9 +22,17 @@ export const getFanficById = async (id) => {
     return await fanficsRepository.getFanficById(id);
 }
 
-export const searchFanfics = async (q) => {
-    return await fanficsRepository.searchFanfics(q);
+export const searchFanficsByNameOrAuthor = async (q) => {
+    return await fanficsSearchRepository.searchFanficsByNameOrAuthor(q);
 }
+
+export const searchByTags = async ({ tags }) => {
+    if (!tags || Object.keys(tags).length === 0) {
+        throw new Error('At least one tag filter required');
+    }
+
+    return fanficsSearchRepository.searchByTags(tags);
+};
 
 export const patchFanfic = async (fanficId, userId, body) => {
 
@@ -41,6 +50,11 @@ export const patchFanfic = async (fanficId, userId, body) => {
 export const deleteFanfic = async (fanficId, userId) => {
     await checkAuthor(fanficId, userId);
     return await fanficsRepository.deleteFanficById(fanficId);
+}
+
+
+export const getAllLikesCount = async (fanficId) => {
+    return await fanficsRepository.getAllFanficLikesCount(fanficId);
 }
 
 

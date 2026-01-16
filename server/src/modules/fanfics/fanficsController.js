@@ -31,7 +31,7 @@ export const getFanficById = async (req, res, next) => {
     }
 };
 
-export const searchFanfics = async (req, res, next) => {
+export const searchFanficsByNameOrAuthor = async (req, res, next) => {
     try{
         const { q } = req.query;
 
@@ -39,7 +39,7 @@ export const searchFanfics = async (req, res, next) => {
             return res.status(400).json({ message: 'Query param q is required' });
         }
 
-        const data = await fanficsService.searchFanfics(q);
+        const data = await fanficsService.searchFanficsByNameOrAuthor(q);
 
         res.json(data);
     }
@@ -47,6 +47,16 @@ export const searchFanfics = async (req, res, next) => {
         next(err);
     }
 };
+
+export const searchByTags = async (req, res, next) => {
+    try {
+        const result = await fanficsService.searchByTags(req.body);
+        res.json(result);
+    } catch (e) {
+        next(e);
+    }
+};
+
 
 export const patchFanfic = async (req, res, next) => {
     try{
@@ -65,6 +75,18 @@ export const deleteFanfic = async (req, res, next) => {
         const fanficId = Number(req.params.fanficId);
         const userId = req.user.id;
         const data = await fanficsService.deleteFanfic(fanficId, userId);
+        res.json(data);
+    }
+    catch (err){
+        next(err);
+    }
+}
+
+
+export const getAllLikesCount = async (req, res, next) => {
+    try{
+        const fanficId = Number(req.params.fanficId);
+        const data = await fanficsService.getAllLikesCount(fanficId);
         res.json(data);
     }
     catch (err){
