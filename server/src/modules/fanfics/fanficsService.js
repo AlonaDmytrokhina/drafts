@@ -53,11 +53,6 @@ export const deleteFanfic = async (fanficId, userId) => {
 }
 
 
-export const getAllLikesCount = async (fanficId) => {
-    return await fanficsRepository.getAllFanficLikesCount(fanficId);
-}
-
-
 
 const checkAuthor = async (fanficId, userId) => {
     const fanfic = await fanficsRepository.getFanficById(fanficId);

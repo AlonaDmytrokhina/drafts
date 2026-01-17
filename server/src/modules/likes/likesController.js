@@ -11,3 +11,15 @@ export const toggleLike = async (req, res, next) => {
     }
 };
 
+
+export const getAllLikesCount = async (req, res, next) => {
+    try{
+        const fanficId = Number(req.params.fanficId);
+        const data = await likesService.getAllLikesCount(fanficId);
+        res.json(data);
+    }
+    catch (err){
+        next(err);
+    }
+};
+

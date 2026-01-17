@@ -4,6 +4,7 @@ import { authMiddleware } from "../../middleware/authMiddleware.js";
 
 const router = Router({ mergeParams: true });
 
+router.get('', likesController.getAllLikesCount);
 router.post("/", authMiddleware, likesController.toggleLike);
 
 export default router;

@@ -12,4 +12,7 @@ export const toggleLike = async (fanficId, userId) => {
     return { liked: true };
 };
 
+export const getAllLikesCount = async (fanficId) => {
+    return await likesRepository.getAllFanficLikesCount(fanficId);
+}
 

@@ -93,14 +93,3 @@ export const deleteFanficById = async (id) => {
     return deletion;
 }
 
-export const getAllFanficLikesCount = async (fanficId) => {
-    const query = `
-        SELECT COUNT(*)::int AS likes_count
-        FROM likes
-        WHERE fanfic_id = $1
-    `;
-
-    const { rows } = await pool.query(query, [fanficId]);
-    return rows[0].likes_count;
-};
-

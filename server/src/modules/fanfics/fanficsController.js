@@ -81,15 +81,3 @@ export const deleteFanfic = async (req, res, next) => {
         next(err);
     }
 }
-
-
-export const getAllLikesCount = async (req, res, next) => {
-    try{
-        const fanficId = Number(req.params.fanficId);
-        const data = await fanficsService.getAllLikesCount(fanficId);
-        res.json(data);
-    }
-    catch (err){
-        next(err);
-    }
-}
