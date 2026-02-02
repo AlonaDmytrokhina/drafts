@@ -1,6 +1,7 @@
 import * as fanficsRepository from "./fanficsRepository.js";
 import * as fanficsSearchRepository from "./fanficsSearchRepository.js";
 import * as patchUtils from "./fanficsUtils.js";
+import {getFanficsForList} from "./fanficsRepository.js";
 const usedFields = ['title', 'summary', 'image_url', 'words_count', 'rating', 'status', 'warnings'];
 
 export const createFanfic = async (data, userId) => {
@@ -15,7 +16,7 @@ export const createFanfic = async (data, userId) => {
 };
 
 export const getAllFanfics = async () => {
-    return await fanficsRepository.getAllFanfics();
+    return await fanficsRepository.getFanficsForList();
 }
 
 export const getFanficById = async (id) => {

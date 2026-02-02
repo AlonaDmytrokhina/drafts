@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Caveat:wght@400..700&family=Dokdo&family=Lily+Script+One&family=Pangolin&display=swap');
+
+:root {
+    --font-main-name: 'Dokdo', cursive;
+    --font-text: 'Inter', regular;
+    --font-amatic: 'Amatic SC', cursive;
+    --font-caveat: 'Caveat', cursive;
+    --font-lily: 'Lily Script One', cursive;
+    --font-pangolin: 'Pangolin', cursive;
+}
