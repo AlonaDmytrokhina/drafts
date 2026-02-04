@@ -1,6 +1,48 @@
+/*Таблиця значень для HEX:*/
+/*100% — FF*/
+/*80% — CC*/
+/*50% — 80*/
+/*30% — 4D*/
+/*10% — 1A*/
+
 :root {
     --color-bg: #FAF3E0;
-    --color-text: #1E1C1A;
+    --color-bg-elem: #FFE1AF;
+
+    --color-main-green: #3E4C32;
+    --color-main-orange: #D5451B;
+    --color-main-yellow: #E9B20D;
+    --color-main-brown: #7A381C;
+
+    --color-additional-green: #5C7B42;
+    --color-additional-orange: #E25E28;
+    --color-additional-yellow: #E9B20D;
+
+
+    --color-text: #333;
+    --color-text-additional: #666;
+
+
+    --color-tags: #A92D2D1A;
+    --color-tags-hover: #EDBDA9;
+
+
+    --color-badges-rating-G: #5C7B4280;
+    --color-badges-rating-T: rgba(237, 219, 34, 0.67);
+    --color-badges-rating-M: #F6900280;
+    --color-badges-rating-E: #F4433680;
+
+    --color-rel-ff: #E91E6380;    /* Рожевий */
+    --color-rel-mm: #2196F380;    /* Блакитний */
+    --color-rel-fm: #9C27B080;    /* Фіолетовий */
+    --color-rel-gen: rgba(84, 168, 28, 0.5);   /* Сірий (нейтральний) */
+    --color-rel-multi: #FF572280; /* Помаранчево-червоний */
+    --color-rel-other: #607D8B80; /* Сизо-сірий */
+
+    /* Status */
+    --color-status-ongoing: #03A9F480;   /* Яскравіший блакитний */
+    --color-status-completed: #4CAF5080; /* Зелений */
+    --color-status-freezed: #79554880;
 
     --color-btn-nocur-1: #5C7B42;
     --color-btn-nocur-2: #E25E28;
@@ -14,6 +56,7 @@
 [data-theme="dark"] {
     --color-bg: #2E2623;
     --color-text: #FAF3E0;
+    --color-text-additional: #666;
 
     --color-btn-nocur-1: #5C7B42;
     --color-btn-nocur-2: #E25E28;

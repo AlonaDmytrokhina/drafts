@@ -1,6 +1,7 @@
+import "../../../styles/components/FanficList.css";
 import { useEffect, useState } from "react";
-import { getFanfics } from "./api";
-import { FicCard } from "./FicCard";
+import { getFanfics } from "../api";
+import { FicCard } from "../fanficCard/FicCard";
 
 export default function FanficList() {
     const [list, setList] = useState([]);

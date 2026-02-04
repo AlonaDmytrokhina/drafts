@@ -3,8 +3,11 @@
 :root {
     --font-main-name: 'Dokdo', cursive;
     --font-text: 'Inter', regular;
+    --font-tag: 'Roboto Mono', monospace;
     --font-amatic: 'Amatic SC', cursive;
     --font-caveat: 'Caveat', cursive;
     --font-lily: 'Lily Script One', cursive;
     --font-pangolin: 'Pangolin', cursive;
+    --font-soft: 'Comfortaa', cursive;
+    --font-btn: 'Inknut Antiqua', sans-serif;
 }

@@ -1,0 +1,7 @@
+.fanfic-list {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+}
