@@ -1,13 +1,21 @@
-/*Таблиця значень для HEX:*/
-/*100% — FF*/
-/*80% — CC*/
-/*50% — 80*/
-/*30% — 4D*/
-/*10% — 1A*/
+/*Відсоток (%),HEX-код,Відсоток (%),HEX-код*/
+/*100%,FF,45%,73*/
+/*95%,F2,40%,66*/
+/*90%,E6,35%,59*/
+/*85%,D9,30%,4D*/
+/*80%,CC,25%,40*/
+/*75%,BF,20%,33*/
+/*70%,B3,15%,26*/
+/*65%,A6,10%,1A*/
+/*60%,99,5%,0D*/
+/*55%,8C,3%,08*/
+/*50%,80,0%,00*/
 
 :root {
     --color-bg: #FAF3E0;
     --color-bg-elem: #FFE1AF;
+    --color-bg-register: #8FB86C80;
+    --color-bg-login: #8FB86C80;
 
     --color-main-green: #3E4C32;
     --color-main-orange: #D5451B;
@@ -44,13 +52,13 @@
     --color-status-completed: #4CAF5080; /* Зелений */
     --color-status-freezed: #79554880;
 
-    --color-btn-nocur-1: #5C7B42;
-    --color-btn-nocur-2: #E25E28;
-    --color-btn-nocur-3: #F69002;
+    --color-btn-nocur-1: #557A46; /* Насичений зелений */
+    --color-btn-nocur-2: #E66A43; /* Яскравий корал */
+    --color-btn-nocur-3: #F69002D9; /* Сонячний бурштин */
 
-    --color-btn-cur-1: #3E4C32;
-    --color-btn-cur-2: #D5451B;
-    --color-btn-cur-3: #E9B20D;
+    --color-btn-cur-1: #3D5532;   /* Глибокий ліс */
+    --color-btn-cur-2: #C44D29;   /* Випалена глина */
+    --color-btn-cur-3: #976a18;
 }
 
 [data-theme="dark"] {

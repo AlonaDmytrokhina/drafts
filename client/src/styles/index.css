@@ -11,22 +11,57 @@ body {
 /*---------------Buttons---------------------------*/
 button {
     border: none;
-    padding: 10px 30px;
-    border-radius: 40px;
+    padding: 12px 32px;
+    border-radius: 50px;
     cursor: pointer;
-    transition: background 0.2s;
+
     font-family: var(--font-btn), monospace;
     font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    color: var(--color-text);
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(1px) scale(0.98);
+    transition: all 0.1s;
 }
 
 .button-green {
     background-color: var(--color-btn-nocur-1);
-    color: white;
 }
 
-.button-green:hover {
+.button-green:hover{
     background-color: var(--color-btn-cur-1);
+    color: var(--color-bg-elem);
 }
+
+.button-orange {
+    background-color: var(--color-btn-nocur-2);
+}
+
+.button-orange:hover{
+    background-color: var(--color-btn-cur-2);
+    color: var(--color-bg-elem);
+}
+
+.button-yellow {
+    background-color: var(--color-btn-nocur-3);
+}
+
+.button-yellow:hover{
+    background-color: var(--color-btn-cur-3);
+    color: var(--color-bg);
+}
+
+
 /*-------------------------------------------------*/
 
 /*---------------   ---------------------------*/

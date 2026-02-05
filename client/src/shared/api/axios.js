@@ -5,4 +5,12 @@ const api = axios.create({
     withCredentials: import.meta.env.VITE_WITH_CREDENTIALS === "true",
 });
 
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
 export default api;

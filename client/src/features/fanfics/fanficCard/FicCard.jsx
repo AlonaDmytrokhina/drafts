@@ -1,3 +1,5 @@
+import { useState } from "react"; // Додаємо useState
+import { Heart, Bookmark } from "lucide-react"; // Імпортуємо іконки
 import "@/styles/components/FicCard.css";
 import {
     relationshipIcons,
@@ -5,9 +7,11 @@ import {
 } from "./ficIcons";
 import { normalizeIcons } from "@/utils/normalize.js";
 
-
 export const FicCard = ({ fanfic }) => {
-    const { image_url, title, author, summary, tags, status, rating, warnings, relationship, pages } = fanfic;
+    const { image_url, title, author, summary, tags, status, rating, warnings, relationship } = fanfic;
+
+    const [isLiked, setIsLiked] = useState(false);
+    const [isBookmarked, setIsBookmarked] = useState(false);
 
     const ratingIcon = rating.charAt(0).toUpperCase();
     const RelationshipIcon = relationshipIcons[normalizeIcons(relationship)];
@@ -33,24 +37,18 @@ export const FicCard = ({ fanfic }) => {
                 </div>
 
                 <div className="fic-card_stats">
-                    <span className={`badge badge-rating-${rating}`}
-                          title={`Рейтинг: ${rating}`}
-                    >
+                    <span className={`badge badge-rating-${rating}`} title={`Рейтинг: ${rating}`}>
                           {ratingIcon}
                     </span>
 
                     {RelationshipIcon && (
-                        <span className={`badge badge-relationship-${relationship}`}
-                              title={`Стосунки: ${relationship}`}
-                        >
+                        <span className={`badge badge-relationship-${relationship}`} title={`Стосунки: ${relationship}`}>
                           <RelationshipIcon size={16} />
                         </span>
                     )}
 
                     {StatusIcon && (
-                        <span className={`badge badge-status-${status} tooltip`}
-                              title={`Статус: ${status}`}
-                        >
+                        <span className={`badge badge-status-${status} tooltip`} title={`Статус: ${status}`}>
                           <StatusIcon size={16} />
                         </span>
                     )}
@@ -68,6 +66,24 @@ export const FicCard = ({ fanfic }) => {
 
                 <div className="fic-card_footer">
                     <span className="warnings-text">{warnings}</span>
+                </div>
+
+
+                <div className="fic-card_actions">
+                    <button
+                        className={`action-btn btn-like ${isLiked ? 'active' : ''}`}
+                        onClick={() => setIsLiked(!isLiked)}
+                        aria-label="Like"
+                    >
+                        <Heart size={25} />
+                    </button>
+                    <button
+                        className={`action-btn btn-bookmark ${isBookmarked ? 'active' : ''}`}
+                        onClick={() => setIsBookmarked(!isBookmarked)}
+                        aria-label="Bookmark"
+                    >
+                        <Bookmark size={25} />
+                    </button>
                 </div>
             </div>
         </article>
