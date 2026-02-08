@@ -28,8 +28,19 @@ export const login = async ({ email, password }) => {
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
 
+    const safeUser = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        avatar_url: user.avatar_url,
+        bio: user.bio,
+        isAdmin: user.is_admin,
+        created_at: user.created_at,
+    };
+
   return {
     accessToken: token,
+    user: safeUser,
   };
 };
 

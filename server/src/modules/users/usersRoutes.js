@@ -7,6 +7,7 @@ const router = Router();
 
 router.patch("/me", authMiddleware, usersController.patchMe);
 router.delete("/me", authMiddleware, usersController.deleteMe);
+router.get("/:username", usersController.getUserByUsername);
 router.use('/bookmarks', bookmarksRoutes);
 
 export default router;

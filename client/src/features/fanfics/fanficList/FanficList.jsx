@@ -1,18 +1,13 @@
 import "../../../styles/components/FanficList.css";
-import { useEffect, useState } from "react";
-import { getFanfics } from "../api";
+import { useEffect } from "react";
 import { FicCard } from "../fanficCard/FicCard";
+import { useFanficsStore } from "../fanfics.store";
 
 export default function FanficList() {
-    const [list, setList] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const { list, loading, error, fetchFanfics } = useFanficsStore();
 
     useEffect(() => {
-        getFanfics()
-            .then(res => setList(res.data))
-            .catch(() => setError("Failed to load fanfics"))
-            .finally(() => setLoading(false));
+        fetchFanfics();
     }, []);
 
     if (loading) return <p>Loading...</p>;
@@ -20,7 +15,7 @@ export default function FanficList() {
 
     return (
         <section className="fanfic-list">
-            {list.map(fanfic => (
+            {list.map((fanfic) => (
                 <FicCard key={fanfic.id} fanfic={fanfic} />
             ))}
         </section>

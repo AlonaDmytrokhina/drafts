@@ -72,7 +72,7 @@ export const getFanficsForList = async () => {
             f.updated_at,
             f.warnings,
             f.pages,
-            f.relationship, -- ВИПРАВЛЕНО
+            f.relationship,
             json_build_object(
                     'id', u.id,
                     'username', u.username
@@ -80,12 +80,12 @@ export const getFanficsForList = async () => {
             COALESCE(
                     json_agg(
                         DISTINCT jsonb_build_object(
-            'id', t.id,
-            'name', t.name,
-            'type', t.type,
-            'relationship_type', t.relationship_type
-          )
-        ) FILTER (WHERE t.id IS NOT NULL),
+                        'id', t.id,
+                        'name', t.name,
+                        'type', t.type,
+                        'relationship_type', t.relationship_type
+                    )
+                ) FILTER (WHERE t.id IS NOT NULL),
                     '[]'
             ) AS tags
         FROM fanfics f
@@ -97,6 +97,8 @@ export const getFanficsForList = async () => {
     `;
 
     const { rows } = await pool.query(query);
+
+
     return rows;
 };
 
@@ -113,7 +115,7 @@ export const getFanficById = async (id) => {
             f.updated_at,
             f.warnings,
             f.pages,
-            f.relationship, -- ВИПРАВЛЕНО
+            f.relationship,
             json_build_object(
                     'id', u.id,
                     'username', u.username
@@ -136,7 +138,7 @@ export const getFanficById = async (id) => {
         [id]
     );
     return rows[0] || null;
-}
+};
 
 export const patchFanfic = async ({fields, values, index, fanficId}) => {
     const query = `

@@ -30,3 +30,7 @@ export const patchUser = async (user, body) => {
 export const deleteUser = async (id) => {
     return await usersRepository.deleteUserById(id);
 }
+
+export const getUserByUsername = async (username) => {
+    return await usersRepository.getUserByUsername(username);
+}

@@ -1,17 +1,37 @@
-import { useState } from "react"; // Додаємо useState
-import { Heart, Bookmark } from "lucide-react"; // Імпортуємо іконки
+import { Heart, Bookmark } from "lucide-react";
 import "@/styles/components/FicCard.css";
+import { useFanficsStore } from "../fanfics.store";
+import { useAuthStore } from "@/features/auth/auth.store";
 import {
     relationshipIcons,
     statusIcons
 } from "./ficIcons";
 import { normalizeIcons } from "@/utils/normalize.js";
+import { useNavigate } from "react-router-dom";
 
 export const FicCard = ({ fanfic }) => {
-    const { image_url, title, author, summary, tags, status, rating, warnings, relationship } = fanfic;
+    const navigate = useNavigate();
 
-    const [isLiked, setIsLiked] = useState(false);
-    const [isBookmarked, setIsBookmarked] = useState(false);
+    const user = useAuthStore((s) => s.user);
+    const isLoggedIn = !!user;
+
+    const toggleLike = useFanficsStore((s) => s.toggleLike);
+    const toggleBookmark = useFanficsStore((s) => s.toggleBookmark);
+
+    const {
+        id,
+        image_url,
+        title,
+        author,
+        summary,
+        tags,
+        status,
+        rating,
+        warnings,
+        relationship,
+        isLiked,
+        isBookmarked,
+    } = fanfic;
 
     const ratingIcon = rating.charAt(0).toUpperCase();
     const RelationshipIcon = relationshipIcons[normalizeIcons(relationship)];
@@ -30,9 +50,9 @@ export const FicCard = ({ fanfic }) => {
 
             <div className="fic-card_content">
                 <div className="fic-card_header">
-                    <h3 className="fic-card_title">{title}</h3>
+                    <h3 className="fic-card_title" onClick={() => navigate(`/fanfics/${id}`)}>{title}</h3>
                     <p className="fic-card_author">
-                        by <span>{author?.username || 'Unknown'}</span>
+                        by <span onClick={() => navigate(`/users/${author.username}`)}>{author?.username || 'Unknown'}</span>
                     </p>
                 </div>
 
@@ -71,16 +91,22 @@ export const FicCard = ({ fanfic }) => {
 
                 <div className="fic-card_actions">
                     <button
-                        className={`action-btn btn-like ${isLiked ? 'active' : ''}`}
-                        onClick={() => setIsLiked(!isLiked)}
-                        aria-label="Like"
+                        disabled={!isLoggedIn}
+                        className={`action-btn btn-like ${isLiked ? "active" : ""}`}
+                        onClick={() => {
+                            console.log(isLiked);
+                            toggleLike(id);
+                        }}
+                        title={!isLoggedIn ? "Увійдіть, щоб ставити лайки" : "Лайк"}
                     >
                         <Heart size={25} />
                     </button>
+
                     <button
-                        className={`action-btn btn-bookmark ${isBookmarked ? 'active' : ''}`}
-                        onClick={() => setIsBookmarked(!isBookmarked)}
-                        aria-label="Bookmark"
+                        disabled={!isLoggedIn}
+                        className={`action-btn btn-bookmark ${isBookmarked ? "active" : ""}`}
+                        onClick={() => toggleBookmark(id)}
+                        title={!isLoggedIn ? "Увійдіть, щоб зберігати фанфіки" : "Зберегти"}
                     >
                         <Bookmark size={25} />
                     </button>

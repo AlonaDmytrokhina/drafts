@@ -12,7 +12,8 @@ export const createFanfic = async (req, res, next) => {
 
 export const getAllFanfics = async (req, res, next) => {
     try{
-        const data = await fanficsService.getAllFanfics();
+        const userId = req.user?.id;
+        const data = await fanficsService.getAllFanfics(userId);
         return res.json(data);
     }
     catch (err){

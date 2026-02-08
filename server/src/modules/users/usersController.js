@@ -17,3 +17,13 @@ export const deleteMe = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getUserByUsername = async (req, res, next) => {
+    const username = req.params.username;
+    try {
+        const data = await usersService.getUserByUsername(username);
+        res.json(data);
+    } catch (error) {
+        next(error);
+    }
+}

@@ -1,31 +1,19 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { registerUser } from './api';
+import { useNavigate } from 'react-router-dom';;
+import { useAuthStore } from "./auth.store";
 import "@/styles/components/Auth.css";
 
 export default function Register() {
-    const [formData, setFormData] = useState({ username: '', email: '', password: '' });
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+    const navigate = useNavigate();
+    const { register, loading, error } = useAuthStore();
+    const [formData, setFormData] = useState({ username: '', email: '', password: '' })
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        setError(null);
 
-        try {
-            await registerUser(formData);
-            navigate('/login', { state: { message: 'Реєстрація успішна! Тепер увійдіть.' } });
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
+        const success = await register(formData);
+        if (success) navigate("/login", { state: { message: 'Реєстрація успішна! Тепер увійдіть.' } });
     };
 
     return (
@@ -39,21 +27,24 @@ export default function Register() {
                     <input
                         name="username"
                         placeholder="Нікнейм"
-                        onChange={handleChange}
+                        onChange={(e) =>
+                            setFormData({ ...formData, username: e.target.value })}
                         required
                     />
                     <input
                         name="email"
                         type="email"
                         placeholder="Email"
-                        onChange={handleChange}
+                        onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })}
                         required
                     />
                     <input
                         name="password"
                         type="password"
                         placeholder="Пароль"
-                        onChange={handleChange}
+                        onChange={(e) =>
+                            setFormData({ ...formData, password: e.target.value })}
                         required
                     />
 

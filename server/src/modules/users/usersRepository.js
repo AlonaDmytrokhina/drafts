@@ -21,3 +21,30 @@ export const deleteUserById = async (id) => {
   const { deletion } = await pool.query(query, [id]);
   return deletion;
 };
+
+export const getUserByUsername = async (username) => {
+    const query = `
+      SELECT * FROM users WHERE username = $1
+    `;
+
+    const { rows } = await pool.query(query, [username]);
+    return rows[0];
+}
+
+export const allUserLikes = async (id) => {
+    const query = `
+        SELECT * FROM likes WHERE user_id = $1
+    `
+
+    const { rows } = await pool.query(query, [id]);
+    return rows;
+}
+
+export const allUserBookmarks = async (id) => {
+    const query = `
+        SELECT * FROM bookmarks WHERE user_id = $1
+    `
+
+    const { rows } = await pool.query(query, [id]);
+    return rows;
+}

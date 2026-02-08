@@ -1,20 +1,18 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "@/styles/components/Header.css";
-import { Search, Menu, User, LogOut, Bell } from "lucide-react"; // Додали іконки
+import { Search, Menu, User, LogOut, Bell } from "lucide-react";
+import { useAuthStore } from "@/features/auth/auth.store";
 
 export default function Header() {
     const navigate = useNavigate();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        setIsLoggedIn(!!token);
-    }, []);
+    const user = useAuthStore((s) => s.user);
+    const logout = useAuthStore((s) => s.logout);
+
+    const isLoggedIn = !!user;
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        setIsLoggedIn(false);
+        logout();
         navigate("/");
     };
 
@@ -36,18 +34,40 @@ export default function Header() {
                 {isLoggedIn ? (
                     <>
                         <button className="header_btn">Створити</button>
+
                         <Bell size={24} className="icon" />
-                        <div className="avatar" onClick={() => navigate("/profile")}>
-                            <User size={24} className="icon"/>
+
+                        <div
+                            className="avatar"
+                            onClick={() => navigate(`/users/${user.username}`)}
+                        >
+                            {user.avatar_url ? (
+                                <img src={user.avatar_url} alt={user.username} />
+                            ) : (
+                                <User size={24} className="icon" />
+                            )}
                         </div>
-                        <LogOut size={24} className="icon" onClick={handleLogout} title="Вийти" />
+
+                        <LogOut
+                            size={24}
+                            className="icon"
+                            onClick={handleLogout}
+                            title="Вийти"
+                        />
                     </>
                 ) : (
                     <>
-                        <button className="header_btn" onClick={() => navigate("/register")}>
+                        <button
+                            className="header_btn"
+                            onClick={() => navigate("/register")}
+                        >
                             Зареєстуватися
                         </button>
-                        <button className="header_btn primary" onClick={() => navigate("/login")}>
+
+                        <button
+                            className="header_btn primary"
+                            onClick={() => navigate("/login")}
+                        >
                             Увійти
                         </button>
                     </>

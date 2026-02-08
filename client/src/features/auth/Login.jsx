@@ -1,37 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "./api"; // Шлях до вашого сервісу
+import { useAuthStore } from "./auth.store";
 
 export default function Login() {
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({ email: "", password: "" });
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+    const { login, loading, error } = useAuthStore();
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+    });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        setError("");
 
-        try {
-            const data = await loginUser(formData);
-
-            // Зберігаємо токен (accessToken), який прийшов з бекенду
-            localStorage.setItem("token", data.accessToken);
-
-            // Переходимо на сторінку з фанфіками
-            navigate("/fanfics");
-        } catch (err) {
-            // Обробка помилки (беремо повідомлення з відповіді сервера)
-            setError(err.response?.data?.message || "Невірний логін або пароль");
-        } finally {
-            setLoading(false);
-        }
+        const success = await login(formData);
+        console.log(success);
+        if (success) navigate("/fanfics");
     };
 
     return (
@@ -47,7 +33,8 @@ export default function Login() {
                         name="email"
                         placeholder="Електронна пошта"
                         value={formData.email}
-                        onChange={handleChange}
+                        onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })}
                         required
                     />
 
@@ -56,7 +43,8 @@ export default function Login() {
                         name="password"
                         placeholder="Пароль"
                         value={formData.password}
-                        onChange={handleChange}
+                        onChange={(e) =>
+                            setFormData({ ...formData, password: e.target.value })}
                         required
                     />
 

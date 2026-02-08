@@ -4,11 +4,11 @@ import chaptersRoutes from "../chapters/chaptersRoutes.js";
 import fanficsTagsRoutes from "../fanficsTags/fanficsTagsRoutes.js";
 import likesRoutes from "../likes/likesRoutes.js";
 import bookmarksRoutes from "../bookmarks/bookmarksRoutes.js";
-import { authMiddleware } from "../../middleware/authMiddleware.js";
+import { authMiddleware, optionalAuth } from "../../middleware/authMiddleware.js";
 
 const router = Router();
 
-router.get('/', fanficsController.getAllFanfics);
+router.get('/', optionalAuth, fanficsController.getAllFanfics);
 router.get('/:fanficId', fanficsController.getFanficById);
 router.get('/search', fanficsController.searchFanficsByNameOrAuthor);
 router.post('/search', fanficsController.searchByTags);
