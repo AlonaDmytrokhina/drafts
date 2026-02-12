@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import "@/styles/components/Header.css";
-import { Search, Menu, User, LogOut, Feather, Sparkles } from "lucide-react";
+import { Search, Menu, User, LogOut, Feather, Sparkles, ChevronDown } from "lucide-react";
 import { useAuthStore } from "@/features/auth/auth.store";
+import { CategoryPanel} from "@/shared/ui/CategoryPanel";
 
 export default function Header() {
     const navigate = useNavigate();
@@ -10,69 +12,103 @@ export default function Header() {
     const logout = useAuthStore((s) => s.logout);
 
     const isLoggedIn = !!user;
+    const [searchQuery, setSearchQuery] = useState("");
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
     const handleLogout = () => {
         logout();
         navigate("/");
     };
 
+    const handleSearch = (e) => {
+        if ((e.key === "Enter" || e.type === "click") && searchQuery.trim()) {
+            navigate(`/fanfics?q=${encodeURIComponent(searchQuery.trim())}`);
+        }
+    };
+
+    const closePanel = () => setIsCategoryOpen(false);
+
     return (
-        <header className="header">
-            <div className="header_left">
-                <Menu size={32} className="icon" />
-                <button className="header_btn">Категорії</button>
-            </div>
-
-            <div className="header_center">
-                <div className="search_box">
-                    <input type="text" placeholder="Пошук..." />
+        <>
+            <header className="header">
+                <div className="header_left">
+                    <Menu size={32} className="icon" />
+                    <button
+                        className={`header_btn ${isCategoryOpen ? 'active' : ''}`}
+                        onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                    >
+                        Категорії
+                        <ChevronDown size={16} className={isCategoryOpen ? 'rotate' : ''} />
+                    </button>
                 </div>
-                <Search size={28} className="icon" />
-            </div>
 
-            <div className="header_right">
-                {isLoggedIn ? (
-                    <>
-                        <Feather size={24} className="icon" />
-
-                        <Sparkles size={24} className="icon" />
-
-                        <div
-                            className="avatar"
-                            onClick={() => navigate(`/profile`)}
-                        >
-                            {user.avatar_url ? (
-                                <img src={user.avatar_url} alt={user.username} />
-                            ) : (
-                                <User size={24} className="icon" />
-                            )}
-                        </div>
-
-                        <LogOut
-                            size={24}
-                            className="icon"
-                            onClick={handleLogout}
-                            title="Вийти"
+                <div className="header_center">
+                    <div className="search_box">
+                        <input
+                            type="text"
+                            placeholder="Пошук..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={handleSearch}
                         />
-                    </>
-                ) : (
-                    <>
-                        <button
-                            className="header_btn"
-                            onClick={() => navigate("/register")}
-                        >
-                            Зареєстуватися
-                        </button>
+                    </div>
+                    <Search
+                        size={28}
+                        className="icon"
+                        onClick={handleSearch}
+                    />
+                </div>
 
-                        <button
-                            className="header_btn primary"
-                            onClick={() => navigate("/login")}
-                        >
-                            Увійти
-                        </button>
-                    </>
-                )}
+                <div className="header_right">
+                    {isLoggedIn ? (
+                        <>
+                            <Feather size={24} className="icon" />
+
+                            <Sparkles size={24} className="icon" />
+
+                            <div
+                                className="avatar"
+                                onClick={() => navigate(`/profile`)}
+                            >
+                                {user.avatar_url ? (
+                                    <img src={user.avatar_url} alt={user.username} />
+                                ) : (
+                                    <User size={24} className="icon" />
+                                )}
+                            </div>
+
+                            <LogOut
+                                size={24}
+                                className="icon"
+                                onClick={handleLogout}
+                                title="Вийти"
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <button
+                                className="header_btn"
+                                onClick={() => navigate("/register")}
+                            >
+                                Зареєстуватися
+                            </button>
+
+                            <button
+                                className="header_btn primary"
+                                onClick={() => navigate("/login")}
+                            >
+                                Увійти
+                            </button>
+                        </>
+                    )}
+                </div>
+            </header>
+
+            {isCategoryOpen && <div className="overlay" onClick={closePanel} />}
+
+            <div className={`category-dropdown ${isCategoryOpen ? 'open' : ''}`}>
+                <CategoryPanel onSelect={closePanel} />
             </div>
-        </header>
+        </>
     );
 }

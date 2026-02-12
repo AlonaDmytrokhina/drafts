@@ -1,5 +1,3 @@
-
-//TODO: виправити лайки та зберігання!!!!! взагалі коороче пофіксити фанфіки та розібратися
 import { create } from "zustand";
 import { toggleLike, toggleBookmark, findFanfics } from "./api";
 
@@ -11,13 +9,29 @@ export const useFanficsStore = create((set, get) => ({
     error: null,
     search: "",
     limit: 10,
+    selectedTagsId: [],
+
+    abortController: null,
 
     fetchFanfics: async (page = 1) => {
-        set({ loading: true, error: null });
-        const { search, limit } = get();
+        const currentController = get().abortController;
+        if (currentController) currentController.abort();
+
+        const newController = new AbortController();
+        set({ loading: true, error: null, abortController: newController });
+
+        const { search, limit, selectedTagsId } = get();
 
         try {
-            const res = await findFanfics({ search, limit, page });
+            const res = await findFanfics(
+                {
+                    search,
+                    tags: selectedTagsId,
+                    limit,
+                    page
+                },
+                { signal: newController.signal }
+            );
 
             const { data, meta } = res.data;
 
@@ -26,31 +40,47 @@ export const useFanficsStore = create((set, get) => ({
                 currentPage: meta.currentPage || page,
                 totalPages: meta.totalPages || 1,
                 loading: false,
+                abortController: null
             });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (page !== get().currentPage) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         } catch (err) {
+            if (err.name === 'CanceledError' || err.name === 'AbortError') return;
+
             console.error(err);
-            set({ error: "Не вдалося завантажити дані", loading: false, list: [] });
+            set({ error: "Не вдалося завантажити дані", loading: false, list: [], abortController: null });
         }
     },
 
     toggleLike: async (id) => {
+        const item = get().list.find(f => f.id === id);
+        if (!item) return;
 
-        const currentList = get().list;
+        const previousState = item.isLiked;
+
         set((state) => ({
-            list: state.list.map(f => f.id === id ? { ...f, isLiked: !f.isLiked } : f)
+            list: state.list.map(f => f.id === id ? {
+                ...f,
+                isLiked: !f.isLiked,
+                likesCount: f.likesCount + (f.isLiked ? -1 : 1)
+            } : f)
         }));
 
         try {
             await toggleLike(id);
         } catch (err) {
-            set({ list: currentList });
-            console.error("Like failed", err);
+            set((state) => ({
+                list: state.list.map(f => f.id === id ? { ...f, isLiked: previousState } : f)
+            }));
         }
     },
 
     toggleBookmark: async (id) => {
-        const currentList = get().list;
+        const item = get().list.find(f => f.id === id);
+        if (!item) return;
+        const previousState = item.isBookmarked;
 
         set((state) => ({
             list: state.list.map(f => f.id === id ? { ...f, isBookmarked: !f.isBookmarked } : f)
@@ -59,20 +89,25 @@ export const useFanficsStore = create((set, get) => ({
         try {
             await toggleBookmark(id);
         } catch (err) {
-            set({ list: currentList });
-            console.error("Bookmark failed", err);
+            set((state) => ({
+                list: state.list.map(f => f.id === id ? { ...f, isBookmarked: previousState } : f)
+            }));
         }
     },
 
-    setSearch: (search) => {
-        set({ search });
+    setTags: (ids) => {
+        set({ selectedTagsId: ids, currentPage: 1 });
         get().fetchFanfics(1);
     },
+
+    setSearch: (search) => set({ search }),
 
     resetFanfics: () => set({
         list: [],
         currentPage: 1,
         totalPages: 1,
-        search: ""
+        search: "",
+        selectedTagsId: [],
+        error: null
     }),
 }));

@@ -167,7 +167,7 @@ export const deleteFanficById = async (id) => {
     return deletion;
 }
 
-export const findFanfics = async ({ userId, search, limit = 20, offset = 0 }) => {
+export const findFanfics = async ({ userId, search, tags, limit = 20, offset = 0 }) => {
     const values = [];
     const conditions = [];
 
@@ -180,6 +180,18 @@ export const findFanfics = async ({ userId, search, limit = 20, offset = 0 }) =>
     if (search) {
         values.push(`%${search}%`);
         conditions.push(`(f.title ILIKE $${values.length} OR u.username ILIKE $${values.length})`);
+    }
+
+    if (tags) {
+        const tagsArray = Array.isArray(tags) ? tags : [tags];
+        if (tagsArray.length > 0) {
+            values.push(tagsArray);
+            conditions.push(`EXISTS (
+                SELECT 1 FROM fanfics_tags ft_filter 
+                WHERE ft_filter.fanfic_id = f.id 
+                AND ft_filter.tag_id = ANY($${values.length}::int[])
+            )`);
+        }
     }
 
     const query = `

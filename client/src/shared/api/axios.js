@@ -1,7 +1,11 @@
 import axios from "axios";
+import qs from "qs";
 
 const api = axios.create({
     baseURL: "http://localhost:5000/api",
+    paramsSerializer: params => {
+        return qs.stringify(params, { arrayFormat: 'repeat' });
+    }
 });
 
 api.interceptors.request.use((config) => {

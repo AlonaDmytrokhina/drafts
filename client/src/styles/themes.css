@@ -13,6 +13,7 @@
 
 :root {
     --color-bg: #FAF3E0;
+    --color-bg-hover: #e1ddcf;
     --color-bg-elem: #FFE1AF;
     --color-bg-register: #8FB86C80;
     --color-bg-login: #8FB86C80;
@@ -59,6 +60,9 @@
     --color-btn-cur-1: #3D5532;   /* Глибокий ліс */
     --color-btn-cur-2: #C44D29;   /* Випалена глина */
     --color-btn-cur-3: #976a18;
+
+    --color-panel-bg: rgba(92, 123, 66, 0.70);
+
 }
 
 [data-theme="dark"] {

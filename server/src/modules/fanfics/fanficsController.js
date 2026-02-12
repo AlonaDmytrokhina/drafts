@@ -87,7 +87,13 @@ export const deleteFanfic = async (req, res, next) => {
 export const findFanfics = async (req, res, next) => {
     try {
         const userId = req.user?.id;
-        const { search, limit = 10, page = 1 } = req.query;
+        const { search, tags, limit = 10, page = 1 } = req.query;
+
+        let tagsArray = [];
+        if (tags) {
+            tagsArray = Array.isArray(tags) ? tags : [tags];
+            tagsArray = tagsArray.map(Number).filter(n => !isNaN(n));
+        }
 
         const pageSize = Number(limit);
         const currentPage = Number(page);
@@ -95,6 +101,7 @@ export const findFanfics = async (req, res, next) => {
 
         const { items, totalCount } = await fanficsService.findFanfics(userId, {
             search,
+            tags: tagsArray,
             limit: pageSize,
             offset: offset,
         });

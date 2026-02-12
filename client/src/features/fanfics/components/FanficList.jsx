@@ -3,13 +3,19 @@ import { useEffect } from "react";
 import { FicCard } from "./FicCard";
 import { useFanficsStore } from "../fanfics.store";
 import {useAuthStore} from "@/features/auth/auth.store";
+import {useSearchParams} from "react-router-dom";
 
 export default function FanficList() {
-    const { list, loading, error, fetchFanfics, currentPage, totalPages } = useFanficsStore();
+    const [searchParams] = useSearchParams();
+    const query = searchParams.get("q") || "";
+
+    const { list, loading, error, fetchFanfics, currentPage, totalPages, setSearch, resetFanfics } = useFanficsStore();
 
     useEffect(() => {
-        fetchFanfics(currentPage);
-    }, [fetchFanfics]);
+        setSearch(query);
+        fetchFanfics(1);
+        return () => resetFanfics();
+    }, [query, setSearch, fetchFanfics, resetFanfics]);
 
 
     if (loading) return <p>Loading...</p>;
