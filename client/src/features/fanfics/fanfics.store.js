@@ -1,94 +1,78 @@
+
+//TODO: виправити лайки та зберігання!!!!! взагалі коороче пофіксити фанфіки та розібратися
 import { create } from "zustand";
-import { getFanfics, toggleLike, toggleBookmark } from "./api";
-import {useAuthStore} from "@/features/auth/auth.store";
+import { toggleLike, toggleBookmark, findFanfics } from "./api";
 
 export const useFanficsStore = create((set, get) => ({
     list: [],
+    currentPage: 1,
+    totalPages: 1,
     loading: false,
     error: null,
+    search: "",
+    limit: 10,
 
-    fetchFanfics: async () => {
+    fetchFanfics: async (page = 1) => {
         set({ loading: true, error: null });
+        const { search, limit } = get();
 
         try {
-            const res = await getFanfics();
-            set({ list: res.data, loading: false });
-        } catch (err){
-            console.error("Fetch fanfics error:", err);
-            set({ error: "Failed to load fanfics", loading: false });
+            const res = await findFanfics({ search, limit, page });
+
+            const { data, meta } = res.data;
+
+            set({
+                list: data || [],
+                currentPage: meta.currentPage || page,
+                totalPages: meta.totalPages || 1,
+                loading: false,
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (err) {
+            console.error(err);
+            set({ error: "Не вдалося завантажити дані", loading: false, list: [] });
         }
     },
 
     toggleLike: async (id) => {
-        const { user } = useAuthStore.getState();
-        if (!user) return;
 
-        const fanfic = get().list.find(f => f.id === id);
-        if (!fanfic) return;
-
-        const prevLiked = fanfic.isLiked;
-
-        set({
-            list: get().list.map(f =>
-                f.id === id ? { ...f, isLiked: !prevLiked } : f
-            )
-        });
+        const currentList = get().list;
+        set((state) => ({
+            list: state.list.map(f => f.id === id ? { ...f, isLiked: !f.isLiked } : f)
+        }));
 
         try {
-            const { data } = await toggleLike(id);
-
-            if (typeof data?.isLiked === "boolean") {
-                set({
-                    list: get().list.map(f =>
-                        f.id === id ? { ...f, isLiked: data.isLiked } : f
-                    )
-                });
-            }
+            await toggleLike(id);
         } catch (err) {
-            set({
-                list: get().list.map(f =>
-                    f.id === id ? { ...f, isLiked: prevLiked } : f
-                )
-            });
-
-            console.error("Toggle like failed", err);
+            set({ list: currentList });
+            console.error("Like failed", err);
         }
     },
-
 
     toggleBookmark: async (id) => {
-        const { user } = useAuthStore.getState();
-        if (!user) return;
+        const currentList = get().list;
 
-        const fanfic = get().list.find(f => f.id === id);
-        if (!fanfic) return;
-
-        const prevBookmarked = fanfic.isBookmarked;
-
-        set({
-            list: get().list.map(f =>
-                f.id === id ? { ...f, isBookmarked: !prevBookmarked } : f
-            )
-        });
+        set((state) => ({
+            list: state.list.map(f => f.id === id ? { ...f, isBookmarked: !f.isBookmarked } : f)
+        }));
 
         try {
-            const { data } = await toggleBookmark(id);
-
-            if (typeof data?.isBookmarked === "boolean") {
-                set({
-                    list: get().list.map(f =>
-                        f.id === id ? { ...f, isBookmarked: data.isBookmarked } : f
-                    )
-                });
-            }
+            await toggleBookmark(id);
         } catch (err) {
-            set({
-                list: get().list.map(f =>
-                    f.id === id ? { ...f, isBookmarked: prevBookmarked } : f
-                )
-            });
-
-            console.error("Toggle bookmark failed", err);
+            set({ list: currentList });
+            console.error("Bookmark failed", err);
         }
     },
+
+    setSearch: (search) => {
+        set({ search });
+        get().fetchFanfics(1);
+    },
+
+    resetFanfics: () => set({
+        list: [],
+        currentPage: 1,
+        totalPages: 1,
+        search: ""
+    }),
 }));

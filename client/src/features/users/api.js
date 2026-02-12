@@ -9,3 +9,6 @@ export const updateMe = (data) =>
 
 export const deleteMe = (id) =>
     api.delete(`/users/me`);
+
+export const getMyBookmarks = (id) =>
+    api.delete(`/users/me/bookmarks`);

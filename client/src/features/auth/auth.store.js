@@ -5,9 +5,8 @@ import { loginUser, registerUser, getMe } from "./api";
 export const useAuthStore = create((set, get) => ({
     user: null,
     token: localStorage.getItem("token"),
-    loading: false,
+    loading: true,
     error: null,
-    getUserId: () => get().user?.id,
 
     login: async (credentials) => {
         set({ loading: true, error: null });
@@ -56,14 +55,18 @@ export const useAuthStore = create((set, get) => ({
 
     checkAuth: async () => {
         const token = localStorage.getItem("token");
-        if (!token) return;
+        if (!token) {
+            set({ loading: false });
+            return;
+        }
+
 
         try {
             const { data } = await getMe();
-            set({ user: data, token });
+            set({ user: data, token, loading: false });
         } catch {
             localStorage.removeItem("token");
-            set({ user: null, token: null });
+            set({ user: null, token: null, loading: false });
         }
     },
 }));

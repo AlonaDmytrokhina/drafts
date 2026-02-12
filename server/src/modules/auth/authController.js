@@ -19,5 +19,25 @@ export const login = async (req, res, next) => {
 };
 
 export const me = async (req, res) => {
-  res.json(req.user);
+    const {
+        id,
+        username,
+        email,
+        avatar_url,
+        bio,
+        is_admin,
+        created_at
+    } = req.user;
+
+    res.json({
+        id,
+        username,
+        email,
+        avatar_url,
+        bio,
+        is_admin,
+        created_at
+    });
 };
+
+

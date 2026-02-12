@@ -7,7 +7,8 @@ const router = Router();
 
 router.patch("/me", authMiddleware, usersController.patchMe);
 router.delete("/me", authMiddleware, usersController.deleteMe);
+router.get("/:username/fanfics", usersController.getUserWorks);
 router.get("/:username", usersController.getUserByUsername);
-router.use('/bookmarks', bookmarksRoutes);
+router.get("/me/bookmarks", bookmarksRoutes);
 
 export default router;

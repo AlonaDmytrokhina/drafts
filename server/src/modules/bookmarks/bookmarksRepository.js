@@ -32,7 +32,7 @@ export const isFanficBookmarkedByUser = async (fanficId, userId) => {
     `;
 
     const { rows } = await pool.query(query, [fanficId, userId]);
-    return rows[0].liked;
+    return rows[0].bookmarked;
 };
 
 export const getUserBookmarks = async (userId) => {

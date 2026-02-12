@@ -1,8 +1,8 @@
 import * as fanficsRepository from "./fanficsRepository.js";
 import * as fanficsSearchRepository from "./fanficsSearchRepository.js";
 import * as patchUtils from "./fanficsUtils.js";
-import {getFanficsForList} from "./fanficsRepository.js";
 import {allUserBookmarks, allUserLikes} from "../users/usersRepository.js";
+
 const usedFields = ['title', 'summary', 'image_url', 'words_count', 'rating', 'status', 'warnings'];
 
 export const createFanfic = async (data, userId) => {
@@ -24,12 +24,11 @@ export const getAllFanfics = async (userId) => {
         const likedIds = userLikes.map(l => l.fanfic_id);
         const userBookmarks = await allUserBookmarks(userId);
         const bookmarksIds = userBookmarks.map(l => l.fanfic_id);
-        const fanficsWithReactions = fanfics.map(f => ({
+        return fanfics.map(f => ({
             ...f,
             isLiked: likedIds.includes(f.id),
             isBookmarked: bookmarksIds.includes(f.id),
         }));
-        return fanficsWithReactions;
     }
     return fanfics.map(f => ({
         ...f,
@@ -85,3 +84,16 @@ const checkAuthor = async (fanficId, userId) => {
         throw new Error('You are not the author of this fanfic');
     }
 }
+
+
+export const findFanfics = async (userId, filters = {}) => {
+    const { items, totalCount } = await fanficsRepository.findFanfics({
+        userId,
+        ...filters,
+    });
+
+    return {
+        items,
+        totalCount
+    };
+};

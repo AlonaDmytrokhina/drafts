@@ -5,3 +5,18 @@
     gap: 1.5rem;
     padding: 1rem;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+
+.pagination button:disabled {
+    background: rgba(248, 89, 7, 0.65);
+    cursor: not-allowed;
+    color: #999;
+}

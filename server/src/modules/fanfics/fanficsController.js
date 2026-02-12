@@ -82,3 +82,37 @@ export const deleteFanfic = async (req, res, next) => {
         next(err);
     }
 }
+
+
+export const findFanfics = async (req, res, next) => {
+    try {
+        const userId = req.user?.id;
+        const { search, limit = 10, page = 1 } = req.query;
+
+        const pageSize = Number(limit);
+        const currentPage = Number(page);
+        const offset = (currentPage - 1) * pageSize;
+
+        const { items, totalCount } = await fanficsService.findFanfics(userId, {
+            search,
+            limit: pageSize,
+            offset: offset,
+        });
+
+        const totalPages = Math.ceil(totalCount / pageSize);
+
+        res.json({
+            data: items,
+            meta: {
+                totalCount,
+                totalPages,
+                currentPage,
+                hasNextPage: currentPage < totalPages,
+                hasPreviousPage: currentPage > 1
+            }
+        });
+    } catch (e) {
+        next(e);
+    }
+};
+

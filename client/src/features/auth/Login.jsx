@@ -17,7 +17,8 @@ export default function Login() {
 
         const success = await login(formData);
         console.log(success);
-        if (success) navigate("/fanfics");
+        console.log(success);
+        if (success) navigate("/profile");
     };
 
     return (

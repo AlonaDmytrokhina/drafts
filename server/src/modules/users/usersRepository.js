@@ -22,6 +22,16 @@ export const deleteUserById = async (id) => {
   return deletion;
 };
 
+export const getUserById = async (id) => {
+    const query = `
+      SELECT * FROM users WHERE id = $1
+    `;
+
+    const { rows } = await pool.query(query, [id]);
+    return rows[0];
+}
+
+
 export const getUserByUsername = async (username) => {
     const query = `
       SELECT * FROM users WHERE username = $1
@@ -48,3 +58,14 @@ export const allUserBookmarks = async (id) => {
     const { rows } = await pool.query(query, [id]);
     return rows;
 }
+
+
+export const allUserWorks = async (id) => {
+    const query = `
+        SELECT * FROM fanfics WHERE author_id = $1
+    `
+
+    const { rows } = await pool.query(query, [id]);
+    return rows;
+}
+

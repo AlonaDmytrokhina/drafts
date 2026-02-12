@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import "@/styles/components/Header.css";
-import { Search, Menu, User, LogOut, Bell } from "lucide-react";
+import { Search, Menu, User, LogOut, Feather, Sparkles } from "lucide-react";
 import { useAuthStore } from "@/features/auth/auth.store";
 
 export default function Header() {
@@ -33,13 +33,13 @@ export default function Header() {
             <div className="header_right">
                 {isLoggedIn ? (
                     <>
-                        <button className="header_btn">Створити</button>
+                        <Feather size={24} className="icon" />
 
-                        <Bell size={24} className="icon" />
+                        <Sparkles size={24} className="icon" />
 
                         <div
                             className="avatar"
-                            onClick={() => navigate(`/users/${user.username}`)}
+                            onClick={() => navigate(`/profile`)}
                         >
                             {user.avatar_url ? (
                                 <img src={user.avatar_url} alt={user.username} />

@@ -9,6 +9,7 @@ import { authMiddleware, optionalAuth } from "../../middleware/authMiddleware.js
 const router = Router();
 
 router.get('/', optionalAuth, fanficsController.getAllFanfics);
+router.get('/test', optionalAuth, fanficsController.findFanfics);
 router.get('/:fanficId', fanficsController.getFanficById);
 router.get('/search', fanficsController.searchFanficsByNameOrAuthor);
 router.post('/search', fanficsController.searchByTags);

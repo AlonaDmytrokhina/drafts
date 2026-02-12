@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { pool } from "../../config/db.js";
+import { BASE_FANFICS_QUERY } from "./fanficsSql.js";
 
 
 export const createFanfic = async ({
@@ -165,4 +166,63 @@ export const deleteFanficById = async (id) => {
     const { deletion } = await pool.query(query, [id]);
     return deletion;
 }
+
+export const findFanfics = async ({ userId, search, limit = 20, offset = 0 }) => {
+    const values = [];
+    const conditions = [];
+
+    let userIdPlaceholder = "NULL";
+    if (userId) {
+        values.push(userId);
+        userIdPlaceholder = `$${values.length}`;
+    }
+
+    if (search) {
+        values.push(`%${search}%`);
+        conditions.push(`(f.title ILIKE $${values.length} OR u.username ILIKE $${values.length})`);
+    }
+
+    const query = `
+        WITH fanfic_tags AS (
+            SELECT ft.fanfic_id, json_agg(jsonb_build_object('id', t.id, 'name', t.name, 'type', t.type)) AS tags
+            FROM fanfics_tags ft
+                     JOIN tags t ON t.id = ft.tag_id
+            GROUP BY ft.fanfic_id
+        )
+        SELECT
+            f.id,
+            f.title,
+            f.summary,
+            f.image_url,
+            f.words_count,
+            f.rating,
+            f.status,
+            f.updated_at,
+            f.warnings,
+            f.pages,
+            f.relationship,
+            f.author_id,
+            json_build_object('id', u.id, 'username', u.username) AS author,
+            COALESCE(ft.tags, '[]') AS tags,
+            EXISTS(SELECT 1 FROM likes WHERE fanfic_id = f.id AND user_id = ${userIdPlaceholder}) AS "isLiked",
+            EXISTS(SELECT 1 FROM bookmarks WHERE fanfic_id = f.id AND user_id = ${userIdPlaceholder}) AS "isBookmarked",
+            COUNT(*) OVER() AS total_count
+        FROM fanfics f
+                 JOIN users u ON u.id = f.author_id
+                 LEFT JOIN fanfic_tags ft ON ft.fanfic_id = f.id
+            ${conditions.length ? `WHERE ${conditions.join(" AND ")}` : ""}
+        ORDER BY f.updated_at DESC
+            LIMIT $${values.length + 1}
+        OFFSET $${values.length + 2}
+    `;
+
+    values.push(limit, offset);
+    const { rows } = await pool.query(query, values);
+
+    return {
+        items: rows,
+        totalCount: rows.length > 0 ? parseInt(rows[0].total_count) : 0
+    };
+};
+
 

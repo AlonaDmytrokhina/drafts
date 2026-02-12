@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Login from "../features/auth/Login";
-import FanficList from "../features/fanfics/fanficList/FanficList";
-import FanficPage from "../features/fanfics/fanficPage/FanficPage";
+import FanficList from "../features/fanfics/components/FanficList";
+import FanficPage from "../features/fanfics/components/FanficPage";
 import Layout from "@/shared//ui/Layout";
 import WelcomePage from "../features/welcome/WelcomePage";
 import Register from "../features/auth/Register";
