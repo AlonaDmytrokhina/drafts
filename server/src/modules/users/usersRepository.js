@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { pool } from "../../config/db.js";
+import * as  fanficsRepository from "../fanfics/fanficsRepository.js";
 
 export const updateUser = async ({ fields, values, index, id }) => {
   const query = `
@@ -60,12 +61,28 @@ export const allUserBookmarks = async (id) => {
 }
 
 
-export const allUserWorks = async (id) => {
-    const query = `
-        SELECT * FROM fanfics WHERE author_id = $1
-    `
+export const allUserWorks = async (authorId, currentUserId = null, limit = 10, offset = 0) => {
+    const values = [currentUserId, authorId];
+    const whereClause = `v.author_id = $2`;
+    const sql = fanficsRepository.getBaseFanficQuery(whereClause, values.length);
+    values.push(limit, offset);
 
-    const { rows } = await pool.query(query, [id]);
+    const { rows } = await pool.query(sql, values);
     return rows;
-}
+};
+
+
+export const getUserBookmarks = async (currentUserId = null, limit = 10, offset = 0) => {
+    const values = [currentUserId, currentUserId];
+    const whereClause = `EXISTS (
+        SELECT 1 FROM bookmarks b 
+        WHERE b.fanfic_id = v.id AND b.user_id = $2
+    )`;
+    const sql = fanficsRepository.getBaseFanficQuery(whereClause, values.length);
+
+    values.push(limit, offset);
+
+    const { rows } = await pool.query(sql, values);
+    return rows;
+};
 

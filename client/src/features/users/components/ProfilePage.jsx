@@ -3,6 +3,8 @@ import { useAuthStore } from "@/features/auth/auth.store";
 import { getUserByUsername } from "@/features/users/api";
 import { useEffect, useState } from "react";
 import ProfileHeader from "./ProfileHeader";
+import ProfileTabs from "./ProfileTabs";
+import "@/styles/components/Profile.css";
 
 export default function ProfilePage() {
     const { username } = useParams();
@@ -13,7 +15,7 @@ export default function ProfilePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const isMe = !!authUser && (!username || username === authUser.username);
+    const isMe = !!authUser && username === authUser.username;
 
     useEffect(() => {
         if (authLoading) return;
@@ -28,7 +30,7 @@ export default function ProfilePage() {
             .then(r => setUser(r.data))
             .catch(() => setError("Користувача не знайдено"))
             .finally(() => setLoading(false));
-    }, [username, isMe, authUser, authLoading]); // додали authLoading у залежності
+    }, [username, isMe, authUser, authLoading]);
 
 
     if (loading) return <div>Завантаження профілю...</div>;
@@ -38,7 +40,7 @@ export default function ProfilePage() {
     return (
         <div className="profile-page">
             <ProfileHeader user={user} isMe={isMe} />
-            {/* <ProfileTabs userId={user.id} /> */}
+            <ProfileTabs username={username} isMe={isMe}/>
         </div>
     );
 }

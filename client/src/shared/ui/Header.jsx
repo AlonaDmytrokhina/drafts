@@ -68,7 +68,7 @@ export default function Header() {
 
                             <div
                                 className="avatar"
-                                onClick={() => navigate(`/profile`)}
+                                onClick={() => navigate(`/profile/${user.username}`)}
                             >
                                 {user.avatar_url ? (
                                     <img src={user.avatar_url} alt={user.username} />

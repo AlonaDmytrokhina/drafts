@@ -1,4 +1,5 @@
 import * as usersService from "./usersService.js";
+import {getUserById} from "./usersService.js";
 
 export const patchMe = async (req, res, next) => {
   try {
@@ -31,20 +32,44 @@ export const getUserByUsername = async (req, res, next) => {
 export const getUserWorks = async (req, res) => {
     try {
         const { username } = req.params;
-        const { search, limit, offset } = req.query;
+        const currentUserId = req.user?.id || null;
+        const { limit, offset } = req.query;
 
-        const works = await usersService.allUserWorks(username, {
-            search,
-            limit,
-            offset,
-        });
+        const works = await usersService.allUserWorks(username, currentUserId, limit, offset);
+        if (Array.isArray(works)) {
+            const totalCount = works.length > 0 ? parseInt(works[0].total_count) : 0;
 
+            return res.json({
+                items: works,
+                totalCount: totalCount
+            });
+        }
         res.json(works);
     } catch (err) {
         if (err.message === "USER_NOT_FOUND") {
             return res.status(404).json({ message: "Користувача не знайдено" });
         }
 
+        res.status(500).json({ message: "Помилка сервера" });
+    }
+};
+
+export const getUserBookmarks = async (req, res) => {
+    try {
+        const currentUserId = req.user.id;
+        const { limit, offset } = req.query;
+
+        const result = await usersService.allUserBookmarks(currentUserId, limit, offset);
+        if (Array.isArray(result)) {
+            const totalCount = result.length > 0 ? parseInt(result[0].total_count) : 0;
+
+            return res.json({
+                items: result,
+                totalCount: totalCount
+            });
+        }
+        res.json(result);
+    } catch (err) {
         res.status(500).json({ message: "Помилка сервера" });
     }
 };

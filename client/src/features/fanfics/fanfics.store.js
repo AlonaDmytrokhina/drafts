@@ -54,44 +54,43 @@ export const useFanficsStore = create((set, get) => ({
         }
     },
 
-    toggleLike: async (id) => {
-        const item = get().list.find(f => f.id === id);
-        if (!item) return;
+    toggleLike: async (id, onUpdate) => {
+        const updateAction = onUpdate || ((targetId, updater) => {
+            set((state) => ({
+                list: state.list.map(f => f.id === targetId ? updater(f) : f)
+            }));
+        });
 
-        const previousState = item.isLiked;
-
-        set((state) => ({
-            list: state.list.map(f => f.id === id ? {
-                ...f,
-                isLiked: !f.isLiked,
-                likesCount: f.likesCount + (f.isLiked ? -1 : 1)
-            } : f)
+        updateAction(id, (f) => ({
+            ...f,
+            isLiked: !f.isLiked,
+            likesCount: (f.likesCount ?? 0) + (f.isLiked ? -1 : 1)
         }));
 
         try {
             await toggleLike(id);
         } catch (err) {
-            set((state) => ({
-                list: state.list.map(f => f.id === id ? { ...f, isLiked: previousState } : f)
+            updateAction(id, (f) => ({
+                ...f,
+                isLiked: !f.isLiked,
+                likesCount: (f.likesCount ?? 0) + (f.isLiked ? -1 : 1)
             }));
         }
     },
 
-    toggleBookmark: async (id) => {
-        const item = get().list.find(f => f.id === id);
-        if (!item) return;
-        const previousState = item.isBookmarked;
+    toggleBookmark: async (id, onUpdate) => {
+        const updateAction = onUpdate || ((targetId, updater) => {
+            set((state) => ({
+                list: state.list.map(f => f.id === targetId ? updater(f) : f)
+            }));
+        });
 
-        set((state) => ({
-            list: state.list.map(f => f.id === id ? { ...f, isBookmarked: !f.isBookmarked } : f)
-        }));
+        updateAction(id, (f) => ({ ...f, isBookmarked: !f.isBookmarked }));
 
         try {
             await toggleBookmark(id);
         } catch (err) {
-            set((state) => ({
-                list: state.list.map(f => f.id === id ? { ...f, isBookmarked: previousState } : f)
-            }));
+            updateAction(id, (f) => ({ ...f, isBookmarked: !f.isBookmarked }));
         }
     },
 

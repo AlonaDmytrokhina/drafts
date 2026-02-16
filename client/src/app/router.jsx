@@ -5,7 +5,7 @@ import FanficPage from "../features/fanfics/components/FanficPage";
 import Layout from "@/shared//ui/Layout";
 import WelcomePage from "../features/welcome/WelcomePage";
 import Register from "../features/auth/Register";
-import ProfilePage from "@/features/users/ProfilePage";
+import ProfilePage from "@/features/users/components/ProfilePage";
 
 export const router = createBrowserRouter([
     {
@@ -19,8 +19,8 @@ export const router = createBrowserRouter([
         children: [
             { path: "/fanfics", element: <FanficList /> },
             { path: "/fanfics/:id", element: <FanficPage /> },
-            { path: "/profile", element: <ProfilePage />},
-            { path: "/users/:username", element: <ProfilePage />}
+            { path: "/profile/:username", element: <ProfilePage />}
+            //{ path: "/users/:username", element: <ProfilePage />}
         ],
     },
 ]);

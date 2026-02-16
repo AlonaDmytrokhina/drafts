@@ -4,6 +4,7 @@ import { FicCard } from "./FicCard";
 import { useFanficsStore } from "../fanfics.store";
 import {useAuthStore} from "@/features/auth/auth.store";
 import {useSearchParams} from "react-router-dom";
+import {Pagination} from "@/shared/ui/Pagination";
 
 export default function FanficList() {
     const [searchParams] = useSearchParams();
@@ -17,6 +18,8 @@ export default function FanficList() {
         return () => resetFanfics();
     }, [query, setSearch, fetchFanfics, resetFanfics]);
 
+    const toggleLike = useFanficsStore((s) => s.toggleLike);
+    const toggleBookmark = useFanficsStore((s) => s.toggleBookmark);
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
@@ -25,33 +28,16 @@ export default function FanficList() {
         <div className="FancList">
             <section className="fanfic-list">
                 {list.map((fanfic) => (
-                    <FicCard key={fanfic.id} fanfic={fanfic} />
+                    <FicCard key={fanfic.id} fanfic={fanfic} onLike={toggleLike} onBookmark={toggleBookmark} />
                 ))}
             </section>
 
-            {totalPages > 1 && (
-                <div className="pagination">
-                    <button
-                        className="button-orange"
-                        disabled={currentPage === 1 || loading}
-                        onClick={() => fetchFanfics(currentPage - 1)}
-                    >
-                        Назад
-                    </button>
-
-                    <span className="page-info">
-                        Сторінка <strong>{currentPage}</strong> з {totalPages}
-                    </span>
-
-                    <button
-                        className="button-orange"
-                        disabled={currentPage === totalPages || loading}
-                        onClick={() => fetchFanfics(currentPage + 1)}
-                    >
-                        Вперед
-                    </button>
-                </div>
-            )}
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => fetchFanfics(page)}
+                loading={loading}
+            />
         </div>
 
     );

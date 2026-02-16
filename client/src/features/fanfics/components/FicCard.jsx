@@ -7,24 +7,21 @@ import { normalizeIcons } from "@/utils/normalize.js";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-export const FicCard = ({ fanfic }) => {
+export const FicCard = ({ fanfic, onLike, onBookmark }) => {
     const navigate = useNavigate();
     const user = useAuthStore((s) => s.user);
     const isLoggedIn = !!user;
 
-    const toggleLike = useFanficsStore((s) => s.toggleLike);
-    const toggleBookmark = useFanficsStore((s) => s.toggleBookmark);
-
     const handleLike = async (e) => {
         e.stopPropagation();
         if (!isLoggedIn) return;
-        await toggleLike(fanfic.id);
+        await onLike(fanfic.id);
     };
 
     const handleBookmark = async (e) => {
         e.stopPropagation();
         if (!isLoggedIn) return;
-        await toggleBookmark(fanfic.id);
+        await onBookmark(fanfic.id);
     };
 
     const ratingIcon = fanfic.rating?.charAt(0).toUpperCase() || '?';
@@ -47,7 +44,7 @@ export const FicCard = ({ fanfic }) => {
                 <div className="fic-card_header">
                     <h3 className="fic-card_title">{fanfic.title}</h3>
                     <p className="fic-card_author" onClick={(e) => e.stopPropagation()}>
-                        by <span onClick={() => navigate(`/users/${fanfic.author?.username}`)}>
+                        by <span onClick={() => navigate(`/profile/${fanfic.author?.username}`)}>
                             {fanfic.author?.username || 'Unknown'}
                         </span>
                     </p>
@@ -101,7 +98,6 @@ export const FicCard = ({ fanfic }) => {
                     <button
                         disabled={!isLoggedIn}
                         onClick={handleBookmark}
-                        // Використовуємо fanfic.isBookmarked напряму
                         className={`action-btn btn-bookmark ${fanfic.isBookmarked ? "active" : ""}`}
                         title={!isLoggedIn ? "Увійдіть, щоб зберігати фанфіки" : "Зберегти"}
                     >

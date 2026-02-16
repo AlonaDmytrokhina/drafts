@@ -40,15 +40,16 @@ export const getUserByUsername = async (username) => {
     return await usersRepository.getUserByUsername(username);
 };
 
-export const allUserWorks = async (username, filters) => {
+export const allUserWorks = async (username, currentUserId, limit, offset) => {
     const user = await usersRepository.getUserByUsername(username);
     if (!user) {
         throw new Error("USER_NOT_FOUND");
     }
-    return fanficsRepository.findFanfics({
-        authorId: user.id,
-        ...filters,
-    });
+    return usersRepository.allUserWorks(user.id, currentUserId, limit, offset);
+};
+
+export const allUserBookmarks = async (currentUserId, limit, offset) => {
+    return usersRepository.getUserBookmarks(currentUserId, limit, offset);
 };
 
 

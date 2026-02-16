@@ -10,5 +10,17 @@ export const updateMe = (data) =>
 export const deleteMe = (id) =>
     api.delete(`/users/me`);
 
-export const getMyBookmarks = (id) =>
-    api.delete(`/users/me/bookmarks`);
+export const getUserWorks = (username, page = 1, limit = 10) => {
+    const offset = (page - 1) * limit;
+    return api.get(`/users/${username}/fanfics`, {
+        params: { limit, offset }
+    });
+};
+
+export const getMyBookmarks = (page = 1, limit = 10) => {
+    const offset = (page - 1) * limit;
+    return api.get(`/users/me/bookmarks`, {
+        params: { limit, offset }
+    });
+};
+

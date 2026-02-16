@@ -167,19 +167,32 @@ export const deleteFanficById = async (id) => {
     return deletion;
 }
 
-export const findFanfics = async ({ userId, search, tags, limit = 20, offset = 0 }) => {
-    const values = [];
-    const conditions = [];
+export const getBaseFanficQuery = (whereClause, currentValuesCount, orderBy = 'v.updated_at DESC') => {
+    const limitIdx = currentValuesCount + 1;
+    const offsetIdx = currentValuesCount + 2;
 
-    let userIdPlaceholder = "NULL";
-    if (userId) {
-        values.push(userId);
-        userIdPlaceholder = `$${values.length}`;
-    }
+    return `
+        SELECT 
+            v.*,
+            EXISTS(SELECT 1 FROM likes WHERE fanfic_id = v.id AND user_id = $1) AS "isLiked",
+            EXISTS(SELECT 1 FROM bookmarks WHERE fanfic_id = v.id AND user_id = $1) AS "isBookmarked",
+            COUNT(*) OVER() AS total_count
+        FROM v_fanfic_details v
+        ${whereClause ? `WHERE ${whereClause}` : ''}
+        ORDER BY ${orderBy}
+        LIMIT $${limitIdx} OFFSET $${offsetIdx}
+    `;
+};
+
+
+
+export const findFanfics = async ({ userId, search, tags, limit = 20, offset = 0 }) => {
+    const values = [userId];
+    const conditions = [];
 
     if (search) {
         values.push(`%${search}%`);
-        conditions.push(`(f.title ILIKE $${values.length} OR u.username ILIKE $${values.length})`);
+        conditions.push(`(v.title ILIKE $${values.length} OR v.author->>'username' ILIKE $${values.length})`);
     }
 
     if (tags) {
@@ -188,48 +201,17 @@ export const findFanfics = async ({ userId, search, tags, limit = 20, offset = 0
             values.push(tagsArray);
             conditions.push(`EXISTS (
                 SELECT 1 FROM fanfics_tags ft_filter 
-                WHERE ft_filter.fanfic_id = f.id 
+                WHERE ft_filter.fanfic_id = v.id 
                 AND ft_filter.tag_id = ANY($${values.length}::int[])
             )`);
         }
     }
 
-    const query = `
-        WITH fanfic_tags AS (
-            SELECT ft.fanfic_id, json_agg(jsonb_build_object('id', t.id, 'name', t.name, 'type', t.type)) AS tags
-            FROM fanfics_tags ft
-                     JOIN tags t ON t.id = ft.tag_id
-            GROUP BY ft.fanfic_id
-        )
-        SELECT
-            f.id,
-            f.title,
-            f.summary,
-            f.image_url,
-            f.words_count,
-            f.rating,
-            f.status,
-            f.updated_at,
-            f.warnings,
-            f.pages,
-            f.relationship,
-            f.author_id,
-            json_build_object('id', u.id, 'username', u.username) AS author,
-            COALESCE(ft.tags, '[]') AS tags,
-            EXISTS(SELECT 1 FROM likes WHERE fanfic_id = f.id AND user_id = ${userIdPlaceholder}) AS "isLiked",
-            EXISTS(SELECT 1 FROM bookmarks WHERE fanfic_id = f.id AND user_id = ${userIdPlaceholder}) AS "isBookmarked",
-            COUNT(*) OVER() AS total_count
-        FROM fanfics f
-                 JOIN users u ON u.id = f.author_id
-                 LEFT JOIN fanfic_tags ft ON ft.fanfic_id = f.id
-            ${conditions.length ? `WHERE ${conditions.join(" AND ")}` : ""}
-        ORDER BY f.updated_at DESC
-            LIMIT $${values.length + 1}
-        OFFSET $${values.length + 2}
-    `;
-
+    const whereClause = conditions.length ? conditions.join(" AND ") : "";
+    const sql = getBaseFanficQuery(whereClause, values.length);
     values.push(limit, offset);
-    const { rows } = await pool.query(query, values);
+
+    const { rows } = await pool.query(sql, values);
 
     return {
         items: rows,
