@@ -1,7 +1,5 @@
 import * as fanficsRepository from "./fanficsRepository.js";
-import * as fanficsSearchRepository from "./fanficsSearchRepository.js";
 import * as patchUtils from "./fanficsUtils.js";
-import {allUserBookmarks, allUserLikes} from "../users/usersRepository.js";
 
 const usedFields = ['title', 'summary', 'image_url', 'words_count', 'rating', 'status', 'warnings'];
 
@@ -16,42 +14,11 @@ export const createFanfic = async (data, userId) => {
     });
 };
 
-export const getAllFanfics = async (userId) => {
-    const fanfics = await fanficsRepository.getFanficsForList();
-    if(userId) {
 
-        const userLikes = await allUserLikes(userId);
-        const likedIds = userLikes.map(l => l.fanfic_id);
-        const userBookmarks = await allUserBookmarks(userId);
-        const bookmarksIds = userBookmarks.map(l => l.fanfic_id);
-        return fanfics.map(f => ({
-            ...f,
-            isLiked: likedIds.includes(f.id),
-            isBookmarked: bookmarksIds.includes(f.id),
-        }));
-    }
-    return fanfics.map(f => ({
-        ...f,
-        isLiked: false,
-        isBookmarked: false,
-    }));
+export const getFanficById = async (id, userId = null) => {
+    return await fanficsRepository.getFanficById(id, userId);
 }
 
-export const getFanficById = async (id) => {
-    return await fanficsRepository.getFanficById(id);
-}
-
-export const searchFanficsByNameOrAuthor = async (q) => {
-    return await fanficsSearchRepository.searchFanficsByNameOrAuthor(q);
-}
-
-export const searchByTags = async ({ tags }) => {
-    if (!tags || Object.keys(tags).length === 0) {
-        throw new Error('At least one tag filter required');
-    }
-
-    return fanficsSearchRepository.searchByTags(tags);
-};
 
 export const patchFanfic = async (fanficId, userId, body) => {
 

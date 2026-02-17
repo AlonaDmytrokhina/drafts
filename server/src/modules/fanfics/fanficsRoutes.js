@@ -8,11 +8,8 @@ import { authMiddleware, optionalAuth } from "../../middleware/authMiddleware.js
 
 const router = Router();
 
-router.get('/', optionalAuth, fanficsController.getAllFanfics);
-router.get('/test', optionalAuth, fanficsController.findFanfics);
-router.get('/:fanficId', fanficsController.getFanficById);
-router.get('/search', fanficsController.searchFanficsByNameOrAuthor);
-router.post('/search', fanficsController.searchByTags);
+router.get('/', optionalAuth, fanficsController.findFanfics);
+router.get('/:fanficId', optionalAuth, fanficsController.getFanficById);
 router.post('/', authMiddleware, fanficsController.createFanfic);
 router.patch('/:fanficId', authMiddleware, fanficsController.patchFanfic);
 router.delete('/:fanficId', authMiddleware, fanficsController.deleteFanfic);

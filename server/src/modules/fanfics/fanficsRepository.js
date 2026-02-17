@@ -1,7 +1,5 @@
 import "dotenv/config";
 import { pool } from "../../config/db.js";
-import { BASE_FANFICS_QUERY } from "./fanficsSql.js";
-
 
 export const createFanfic = async ({
     title,
@@ -49,97 +47,32 @@ export const createFanfic = async ({
     return rows[0];
 };
 
-export const getAllFanfics = async () => {
-    const query =
-        `
-            SELECT * FROM fanfics
-            ORDER BY updated_at DESC;
 
-        `
-    const {rows} = await pool.query(query);
-    return rows;
-}
-
-export const getFanficsForList = async () => {
+export const getFanficById = async (id, currentUserId = null) => {
     const query = `
         SELECT
-            f.id,
-            f.title,
-            f.summary,
-            f.image_url,
-            f.words_count,
-            f.rating,
-            f.status,
-            f.updated_at,
-            f.warnings,
-            f.pages,
-            f.relationship,
-            json_build_object(
-                    'id', u.id,
-                    'username', u.username
-            ) AS author,
+            v.*,
+            EXISTS(SELECT 1 FROM likes WHERE fanfic_id = v.id AND user_id = $2) AS "isLiked",
+            EXISTS(SELECT 1 FROM bookmarks WHERE fanfic_id = v.id AND user_id = $2) AS "isBookmarked",
             COALESCE(
-                    json_agg(
-                        DISTINCT jsonb_build_object(
-                        'id', t.id,
-                        'name', t.name,
-                        'type', t.type,
-                        'relationship_type', t.relationship_type
-                    )
-                ) FILTER (WHERE t.id IS NOT NULL),
+                    (SELECT json_agg(jsonb_build_object(
+                            'id', ch.id,
+                            'title', ch.title,
+                            'position', ch.position,
+                            'created_at', ch.created_at
+                                     ) ORDER BY ch.position ASC)
+                     FROM chapters ch
+                     WHERE ch.fanfic_id = v.id),
                     '[]'
-            ) AS tags
-        FROM fanfics f
-                 JOIN users u ON u.id = f.author_id
-                 LEFT JOIN fanfics_tags ft ON ft.fanfic_id = f.id
-                 LEFT JOIN tags t ON t.id = ft.tag_id
-        GROUP BY f.id, u.id
-        ORDER BY f.updated_at DESC;
+            ) AS chapters
+        FROM v_fanfic_details v
+        WHERE v.id = $1;
     `;
 
-    const { rows } = await pool.query(query);
-
-
-    return rows;
-};
-
-export const getFanficById = async (id) => {
-    const query = `
-        SELECT
-            f.id,
-            f.title,
-            f.summary,
-            f.image_url,
-            f.words_count,
-            f.rating,
-            f.status,
-            f.updated_at,
-            f.warnings,
-            f.pages,
-            f.relationship,
-            json_build_object(
-                    'id', u.id,
-                    'username', u.username
-            ) AS author,
-            COALESCE(
-                    json_agg(
-                            json_build_object('id', t.id, 'name', t.name, 'type', t.type, 'relationship_type', t.relationship_type)
-                    ) FILTER (WHERE t.id IS NOT NULL),
-                    '[]'
-            ) AS tags
-        FROM fanfics f
-                 JOIN users u ON u.id = f.author_id
-                 LEFT JOIN fanfics_tags ft ON ft.fanfic_id = f.id
-                 LEFT JOIN tags t ON t.id = ft.tag_id
-        WHERE f.id = $1
-        GROUP BY f.id, u.id;
-    `;
-    const { rows } = await pool.query(
-        query,
-        [id]
-    );
+    const { rows } = await pool.query(query, [id, currentUserId]);
     return rows[0] || null;
 };
+
 
 export const patchFanfic = async ({fields, values, index, fanficId}) => {
     const query = `
@@ -166,6 +99,7 @@ export const deleteFanficById = async (id) => {
     const { deletion } = await pool.query(query, [id]);
     return deletion;
 }
+
 
 export const getBaseFanficQuery = (whereClause, currentValuesCount, orderBy = 'v.updated_at DESC') => {
     const limitIdx = currentValuesCount + 1;

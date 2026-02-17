@@ -1,0 +1,49 @@
+.fic-card_actions {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.action-btn {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.action-btn svg {
+    stroke: var(--color-text);
+}
+
+.action-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: scale(1.1);
+}
+
+.btn-like.active svg {
+    stroke: var(--color-additional-green);
+    fill: var(--color-additional-green);
+}
+
+.btn-bookmark.active svg {
+    stroke: var(--color-main-yellow);
+    fill: var(--color-main-yellow);
+}
+
+.action-btn.active {
+    animation: pop 0.2s ease;
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1.1); }
+}

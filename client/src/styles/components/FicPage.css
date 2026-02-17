@@ -1,0 +1,184 @@
+:root {
+    --main-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --main-border: 1px solid rgba(62, 76, 50, 0.15);
+}
+
+.fic-page-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 2rem;
+    background: var(--color-bg);
+    border-radius: 13px;
+    border: var(--main-border);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+.fic-page_header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.fic-page_image {
+    flex: 0 0 220px;
+}
+
+.fic-page_image img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.fic-page_main-info {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    min-height: 300px;
+}
+
+.fic-page_title {
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: 600;
+}
+
+.fic-page_author {
+    margin: 0.5rem 0 1.5rem;
+    font-size: 1.1rem;
+    color: var(--color-text-additional);
+}
+
+.fic-page_metadata {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.meta-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1.2rem;
+}
+
+.meta-item strong {
+    color: var(--color-text-additional);
+    font-weight: 500;
+    margin-right: 4px;
+}
+
+.fic-page_tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.tag-badge {
+    font-size: 0.9rem;
+    color: var(--color-text);
+    background-color: var(--color-tags);
+    border-radius: 8px;
+    padding: 4px 12px;
+    transition: all 0.2s;
+    opacity: 0.8;
+}
+
+.tag-badge:hover {
+    opacity: 1;
+    background-color: var(--color-tags-hover);
+}
+
+
+.fic-page_summary {
+    margin-bottom: 2.5rem;
+
+}
+
+.fic-page_summary h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+}
+
+.fic-page_summary p {
+    font-size: 1.05rem;
+    color: var(--color-text);
+    opacity: 0.9;
+}
+
+/* --- Chapters List --- */
+.fic-page_chapters h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1.2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.chapters-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.chapter-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    text-decoration: none;
+    color: var(--color-text);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.chapter-item:hover {
+    background: rgba(0, 0, 0, 0.03);
+    padding-left: 1.5rem; /* Ефект зміщення при наведенні */
+}
+
+.chapter-number {
+    font-weight: 600;
+    color: var(--color-main-orange);
+    margin-right: 1rem;
+}
+
+.chapter-title {
+    flex: 1;
+}
+
+.chapter-date {
+    font-size: 0.85rem;
+    color: var(--color-text-additional);
+}
+
+@media (max-width: 600px) {
+    .fic-page-container {
+        margin: 10px;
+        padding: 1.5rem;
+    }
+
+    .fic-page_header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .fic-page_image {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .fic-page_main-info {
+        min-height: 200px;
+    }
+}

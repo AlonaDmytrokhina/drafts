@@ -1,8 +1,7 @@
 import api from "@/shared/api/axios";
 
-export const getFanfics = () => api.get("/fanfics");
 export const findFanfics = ({ search, tags, limit, page }) =>
-    api.get("/fanfics/test", {
+    api.get("/fanfics", {
         params: { search, tags, limit, page }
     });
 

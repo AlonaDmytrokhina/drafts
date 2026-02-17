@@ -1,11 +1,10 @@
 import { Heart, Bookmark } from "lucide-react";
 import "@/styles/components/FicCard.css";
-import { useFanficsStore } from "../fanfics.store";
+import "@/styles/components/Actions.css";
 import { useAuthStore } from "@/features/auth/auth.store";
 import { relationshipIcons, statusIcons } from "@/utils/ficIcons";
 import { normalizeIcons } from "@/utils/normalize.js";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 
 export const FicCard = ({ fanfic, onLike, onBookmark }) => {
     const navigate = useNavigate();
