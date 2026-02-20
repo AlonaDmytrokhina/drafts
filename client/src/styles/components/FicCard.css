@@ -131,6 +131,12 @@
 
 .fic-card_tags {
     margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-height: 3.2rem;
+    overflow: hidden;
+    position: relative;
 }
 
 .fic-card_tag {

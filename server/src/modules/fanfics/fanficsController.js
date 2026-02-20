@@ -1,12 +1,26 @@
 import * as fanficsService from "./fanficsService.js";
 
-export const createFanfic = async (req, res, next) => {
+export const createFanficRaw = async (req, res, next) => {
     try{
         const data = await fanficsService.createFanfic(req.body, req.user.id);
         res.status(201).json(data);
     }
     catch (err){
         next(err);
+    }
+};
+
+
+export const createFanfic = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const image_url = req.file
+            ? `/uploads/covers/${req.file.filename}`
+            : null;
+        const fanfic = await fanficsService.createFanfic(req.body, userId, image_url);
+        res.status(201).json(fanfic);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
 };
 

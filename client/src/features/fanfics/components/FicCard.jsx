@@ -1,15 +1,16 @@
-import { Heart, Bookmark } from "lucide-react";
+import {Heart, Bookmark, Feather} from "lucide-react";
 import "@/styles/components/FicCard.css";
 import "@/styles/components/Actions.css";
 import { useAuthStore } from "@/features/auth/auth.store";
 import { relationshipIcons, statusIcons } from "@/utils/ficIcons";
 import { normalizeIcons } from "@/utils/normalize.js";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 export const FicCard = ({ fanfic, onLike, onBookmark }) => {
     const navigate = useNavigate();
     const user = useAuthStore((s) => s.user);
     const isLoggedIn = !!user;
+    const isMe = isLoggedIn && user.id === fanfic.author.id;
 
     const handleLike = async (e) => {
         e.stopPropagation();
@@ -28,19 +29,20 @@ export const FicCard = ({ fanfic, onLike, onBookmark }) => {
     const StatusIcon = statusIcons[normalizeIcons(fanfic.status)];
 
     return (
-        <article className="fic-card" onClick={() => navigate(`/fanfics/${fanfic.id}`)}>
+        <article className="fic-card">
             <div className="fic-card_image">
                 <img
-                    src={fanfic.image_url || "http://localhost:5000/uploads/images/test.avif"}
+                    src={`http://localhost:5000${fanfic.image_url}` || "http://localhost:5000/uploads/images/test.avif"}
                     alt={fanfic.title}
                     onError={(e) => {
                         e.currentTarget.src = "http://localhost:5000/uploads/images/test.avif";
                     }}
+                    onClick={() => navigate(`/fanfics/${fanfic.id}`)}
                 />
             </div>
 
             <div className="fic-card_content">
-                <div className="fic-card_header">
+                <div className="fic-card_header" onClick={() => navigate(`/fanfics/${fanfic.id}`)}>
                     <h3 className="fic-card_title">{fanfic.title}</h3>
                     <p className="fic-card_author" onClick={(e) => e.stopPropagation()}>
                         by <span onClick={() => navigate(`/profile/${fanfic.author?.username}`)}>
@@ -105,6 +107,23 @@ export const FicCard = ({ fanfic, onLike, onBookmark }) => {
                             fill={fanfic.isBookmarked ? "currentColor" : "none"}
                         />
                     </button>
+
+                    {isMe &&
+                        <Link
+                            key={fanfic.id}
+                            to={`/fanfics/${fanfic.id}/chapters/new`}
+                            disabled={!isLoggedIn}
+                        >
+                            <button
+                                className={`action-btn btn-feather`}
+                                title={"Новий розділ"}
+                            >
+                                <Feather
+                                    size={25}
+                                />
+                            </button>
+                        </Link>
+                    }
                 </div>
             </div>
         </article>

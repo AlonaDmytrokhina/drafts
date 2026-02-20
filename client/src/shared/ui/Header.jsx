@@ -23,6 +23,7 @@ export default function Header() {
     const handleSearch = (e) => {
         if ((e.key === "Enter" || e.type === "click") && searchQuery.trim()) {
             navigate(`/fanfics?q=${encodeURIComponent(searchQuery.trim())}`);
+            setSearchQuery("");
         }
     };
 
@@ -62,13 +63,22 @@ export default function Header() {
                 <div className="header_right">
                     {isLoggedIn ? (
                         <>
-                            <Feather size={24} className="icon" />
 
-                            <Sparkles size={24} className="icon" />
+                            <div
+                                title={"Новий фанфік"}
+                                onClick={() => navigate(`/fanfics/new`)}
+                            >
+                                <Feather size={24} className="icon"/>
+                            </div>
+
+                            <div title={"До бібліотеки"}>
+                                <Sparkles size={24} className="icon" />
+                            </div>
 
                             <div
                                 className="avatar"
                                 onClick={() => navigate(`/profile/${user.username}`)}
+                                title={"Профіль"}
                             >
                                 {user.avatar_url ? (
                                     <img src={user.avatar_url} alt={user.username} />
@@ -77,12 +87,13 @@ export default function Header() {
                                 )}
                             </div>
 
-                            <LogOut
-                                size={24}
-                                className="icon"
-                                onClick={handleLogout}
-                                title="Вийти"
-                            />
+                            <div title={"Вийти"}>
+                                <LogOut
+                                    size={24}
+                                    className="icon"
+                                    onClick={handleLogout}
+                                />
+                            </div>
                         </>
                     ) : (
                         <>

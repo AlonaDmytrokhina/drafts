@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Heart, Bookmark } from "lucide-react";
+import { Heart, Bookmark, Feather } from "lucide-react";
 import "@/styles/components/FicPage.css";
 import "@/styles/components/Actions.css";
 import {useAuthStore} from "@/features/auth/auth.store";
@@ -21,6 +21,8 @@ export default function FanficPage() {
     if (error) return <div className="error">{error}</div>;
     if (!currentFic) return null;
 
+    const isMe = isLoggedIn && user.id === currentFic.author.id;
+
     const handleLike = async () => {
         if (!isLoggedIn) return;
         await toggleLike(currentFic.id);
@@ -36,7 +38,7 @@ export default function FanficPage() {
             <header className="fic-page_header">
                 <div className="fic-page_image">
                     <img
-                        src={currentFic.image_url || "http://localhost:5000/uploads/images/test.avif"}
+                        src={`http://localhost:5000${currentFic.image_url}` || "http://localhost:5000/uploads/images/test.avif"}
                         alt={currentFic.title}
                         onError={(e) => {
                             e.currentTarget.src = "http://localhost:5000/uploads/images/test.avif";
@@ -74,6 +76,23 @@ export default function FanficPage() {
                                 fill={currentFic.isBookmarked ? "currentColor" : "none"}
                             />
                         </button>
+
+                        {isMe &&
+                            <Link
+                                key={currentFic.id}
+                                to={`/fanfics/${id}/chapters/new`}
+                                disabled={!isLoggedIn}
+                            >
+                                <button
+                                    className={`action-btn btn-feather`}
+                                    title={"Новий розділ"}
+                                >
+                                    <Feather
+                                        size={30}
+                                    />
+                                </button>
+                            </Link>
+                        }
                     </div>
                 </div>
             </header>

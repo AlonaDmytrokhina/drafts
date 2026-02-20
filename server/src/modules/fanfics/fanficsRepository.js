@@ -1,50 +1,73 @@
 import "dotenv/config";
 import { pool } from "../../config/db.js";
+import { createTag } from "../tags/tagsRepository.js";
+import { createChapter} from "../chapters/chaptersRepository.js";
 
-export const createFanfic = async ({
-    title,
-    summary,
-    language,
-    image_url,
-    words_count,
-    rating,
-    status,
-    warnings,
-    author_id,
-}) => {
+// export const createFanfic = async ({
+//     title,
+//     summary,
+//     language,
+//     image_url,
+//     words_count,
+//     rating,
+//     status,
+//     warnings,
+//     author_id,
+// }) => {
+//
+//     const query =
+//         `
+//             INSERT INTO fanfics (
+//               title,
+//               summary,
+//               language,
+//               image_url,
+//               words_count,
+//               rating,
+//               status,
+//               warnings,
+//               author_id
+//             )
+//             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+//             RETURNING *
+//         `;
+//
+//     const { rows } = await pool.query(query,
+//         [
+//             title,
+//             summary,
+//             language,
+//             image_url,
+//             words_count,
+//             rating,
+//             status,
+//             warnings,
+//             author_id,
+//         ]
+//     );
+//
+//     return rows[0];
+// };
 
-    const query =
-        `
-            INSERT INTO fanfics (
-              title,
-              summary,
-              language,
-              image_url,
-              words_count,
-              rating,
-              status,
-              warnings,
-              author_id
-            )
-            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-            RETURNING *
-        `;
-
-    const { rows } = await pool.query(query,
-        [
-            title,
-            summary,
-            language,
-            image_url,
-            words_count,
-            rating,
-            status,
-            warnings,
-            author_id,
-        ]
-    );
-
+export const createFanfic = async (client, data) => {
+    const query = `
+        INSERT INTO fanfics (title, summary, language, image_url, words_count, rating, status, warnings, author_id, relationship)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        RETURNING *;
+    `;
+    const values = [
+        data.title, data.summary, data.language, data.image_url,
+        data.words_count, data.rating, data.status, data.warnings, data.author_id, data.relationship
+    ];
+    const { rows } = await client.query(query, values);
     return rows[0];
+};
+
+export const linkTagToFic = async (client, fanficId, tagId) => {
+    await client.query(
+        `INSERT INTO fanfics_tags (fanfic_id, tag_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+        [fanficId, tagId]
+    );
 };
 
 

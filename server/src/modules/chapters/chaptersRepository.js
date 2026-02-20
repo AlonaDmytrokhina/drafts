@@ -20,7 +20,17 @@ export const createChapter = async ({
 
     const values = [fanfic_id, title, content];
     const { rows } = await pool.query(query, values);
+    return rows[0];
+};
 
+export const createFirstChapter = async (client, { title, content, fanfic_id }) => {
+    const query = `
+        INSERT INTO chapters (fanfic_id, title, content, position)
+        SELECT $1, $2, $3, COALESCE(MAX(position), 0) + 1
+        FROM chapters WHERE fanfic_id = $1
+        RETURNING *;
+    `;
+    const { rows } = await client.query(query, [fanfic_id, title, content]);
     return rows[0];
 };
 

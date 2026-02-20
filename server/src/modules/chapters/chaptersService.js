@@ -18,7 +18,7 @@ export const createChapter = async (data, fanficId) => {
     const title = data.title;
     const content = data.content;
 
-    return await chaptersRepository.createChapter({
+    return await chaptersRepository.createChapter( {
         title,
         content,
         fanfic_id: fanficId
