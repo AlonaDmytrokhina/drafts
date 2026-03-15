@@ -1,15 +1,5 @@
 import * as fanficsService from "./fanficsService.js";
 
-export const createFanficRaw = async (req, res, next) => {
-    try{
-        const data = await fanficsService.createFanfic(req.body, req.user.id);
-        res.status(201).json(data);
-    }
-    catch (err){
-        next(err);
-    }
-};
-
 
 export const createFanfic = async (req, res) => {
     try {
@@ -66,37 +56,8 @@ export const deleteFanfic = async (req, res, next) => {
 export const findFanfics = async (req, res, next) => {
     try {
         const userId = req.user?.id;
-        const { search, tags, limit = 10, page = 1 } = req.query;
-
-        let tagsArray = [];
-        if (tags) {
-            tagsArray = Array.isArray(tags) ? tags : [tags];
-            tagsArray = tagsArray.map(Number).filter(n => !isNaN(n));
-        }
-
-        const pageSize = Number(limit);
-        const currentPage = Number(page);
-        const offset = (currentPage - 1) * pageSize;
-
-        const { items, totalCount } = await fanficsService.findFanfics(userId, {
-            search,
-            tags: tagsArray,
-            limit: pageSize,
-            offset: offset,
-        });
-
-        const totalPages = Math.ceil(totalCount / pageSize);
-
-        res.json({
-            data: items,
-            meta: {
-                totalCount,
-                totalPages,
-                currentPage,
-                hasNextPage: currentPage < totalPages,
-                hasPreviousPage: currentPage > 1
-            }
-        });
+        const result = await fanficsService.findFanfics(userId, req.query);
+        res.json(result);
     } catch (e) {
         next(e);
     }

@@ -4,21 +4,12 @@ import * as tagsRepository from "../tags/tagsRepository.js";
 import * as chaptersRepository from "../chapters/chaptersRepository.js";
 import * as patchUtils from "./fanficsUtils.js";
 
+
 const usedFields = ['title', 'summary', 'image_url', 'words_count', 'rating', 'status', 'warnings'];
 
-export const createFanficRaw = async (data, userId) => {
-    if(!data.title){
-        throw new Error("Title is required");
-    }
-
-    return await fanficsRepository.createFanfic({
-        ...data,
-        author_id: userId,
-    });
-};
 
 export const createFanfic = async (data, userId, image_url) => {
-    // Middleware вже зробив data.tags масивом, тому перевірка проста
+
     if (!data.title || !data.content) {
         throw new Error("Заголовок та контент обов'язкові");
     }
@@ -27,11 +18,8 @@ export const createFanfic = async (data, userId, image_url) => {
 
     try {
         await client.query('BEGIN');
-
-        // Розрахунок кількості слів
         const wordsCount = data.content.trim().split(/\s+/).length;
 
-        // 1. Створення фанфіка
         const newFic = await fanficsRepository.createFanfic(client, {
             ...data,
             image_url: image_url,
@@ -39,24 +27,20 @@ export const createFanfic = async (data, userId, image_url) => {
             author_id: userId
         });
 
-        // 2. Створення першого розділу
         await chaptersRepository.createFirstChapter(client, {
             fanfic_id: newFic.id,
             title: data.chapterTitle || "Розділ 1",
             content: data.content
         });
 
-        // 3. Обробка тегів (data.tags вже є масивом завдяки middleware)
         if (data.tags && Array.isArray(data.tags)) {
             for (const tag of data.tags) {
-                // Знаходимо або створюємо тег у базі
                 const tagN = await tagsRepository.findOrCreateTag(client, {
                     name: tag.name,
                     type: tag.type,
                     relationship: tag.relationship
                 });
 
-                // Лінкуємо тег до фанфіка
                 if (tagN && tagN.id) {
                     await fanficsRepository.linkTagToFic(client, newFic.id, tagN.id);
                 }
@@ -78,7 +62,7 @@ export const createFanfic = async (data, userId, image_url) => {
 
 export const getFanficById = async (id, userId = null) => {
     return await fanficsRepository.getFanficById(id, userId);
-}
+};
 
 
 export const patchFanfic = async (fanficId, userId, body) => {
@@ -92,12 +76,64 @@ export const patchFanfic = async (fanficId, userId, body) => {
     let index = info.index;
 
     return await fanficsRepository.patchFanfic({fields, values, index, fanficId});
-}
+};
+
+
 
 export const deleteFanfic = async (fanficId, userId) => {
     await checkAuthor(fanficId, userId);
     return await fanficsRepository.deleteFanficById(fanficId);
-}
+};
+
+
+export const findFanfics = async (userId, query = {}) => {
+    const {
+        search,
+        tags,
+        rating,
+        status,
+        relationship,
+        limit = 10,
+        page = 1
+    } = query;
+
+    let tagsArray = [];
+
+    if (tags) {
+        tagsArray = Array.isArray(tags) ? tags : [tags];
+        tagsArray = tagsArray.map(Number).filter(n => !isNaN(n));
+    }
+
+    const pageSize = Number(limit);
+    const currentPage = Number(page);
+    const offset = (currentPage - 1) * pageSize;
+
+    const { items, totalCount } = await fanficsRepository.findFanfics({
+        userId,
+        search,
+        tags: tagsArray,
+        rating,
+        status,
+        relationship,
+        limit: pageSize,
+        offset
+    });
+
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    return {
+        data: items,
+        meta: {
+            totalCount,
+            totalPages,
+            currentPage,
+            hasNextPage: currentPage < totalPages,
+            hasPreviousPage: currentPage > 1
+        }
+    };
+};
+
+
 
 
 
@@ -111,17 +147,4 @@ const checkAuthor = async (fanficId, userId) => {
     if(fanfic.author_id !== userId) {
         throw new Error('You are not the author of this fanfic');
     }
-}
-
-
-export const findFanfics = async (userId, filters = {}) => {
-    const { items, totalCount } = await fanficsRepository.findFanfics({
-        userId,
-        ...filters,
-    });
-
-    return {
-        items,
-        totalCount
-    };
 };

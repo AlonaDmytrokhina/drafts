@@ -72,7 +72,13 @@ export const FicCard = ({ fanfic, onLike, onBookmark }) => {
                 {!!fanfic.tags?.length && (
                     <div className="fic-card_tags">
                         {fanfic.tags.map(tag => (
-                            <span key={tag.id} className="fic-card_tag">#{tag.name}</span>
+                            <Link
+                                key={tag.id}
+                                to={`/fanfics?tag=${tag.id}`}
+                                className="fic-card_tag"
+                            >
+                                <span key={tag.id} >#{tag.name}</span>
+                            </Link>
                         ))}
                     </div>
                 )}

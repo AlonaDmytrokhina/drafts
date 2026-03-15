@@ -8,6 +8,11 @@ export const useFanficsStore = create((set, get) => ({
     loading: false,
     error: null,
     search: "",
+    filters: {
+        rating: "",
+        status: "",
+        relationship: ""
+    },
     limit: 10,
     selectedTagsId: [],
 
@@ -20,13 +25,14 @@ export const useFanficsStore = create((set, get) => ({
         const newController = new AbortController();
         set({ loading: true, error: null, abortController: newController });
 
-        const { search, limit, selectedTagsId } = get();
+        const { search, limit, filters, selectedTagsId } = get();
 
         try {
             const res = await findFanfics(
                 {
                     search,
                     tags: selectedTagsId,
+                    ...filters,
                     limit,
                     page
                 },
@@ -94,6 +100,13 @@ export const useFanficsStore = create((set, get) => ({
         }
     },
 
+    setFilters: (newFilters) => {
+        set((state) => ({
+            filters: { ...state.filters, ...newFilters },
+            currentPage: 1
+        }));
+    },
+
     setTags: (ids) => {
         set({ selectedTagsId: ids, currentPage: 1 });
         get().fetchFanfics(1);
@@ -107,6 +120,7 @@ export const useFanficsStore = create((set, get) => ({
         totalPages: 1,
         search: "",
         selectedTagsId: [],
+        filters: { rating: "", status: "", relationship: "" },
         error: null
     }),
 }));

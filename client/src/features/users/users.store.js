@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { getUserWorks, getMyBookmarks } from "./api";
-import {useAuthStore} from "@/features/auth/auth.store"; // Імпортуй свої API методи
+import { getUserWorks, getMyBookmarks, updateMe, deleteMe } from "./api";
+import {useAuthStore} from "@/features/auth/auth.store";
 
 export const useUserStore = create((set, get) => ({
     list: [],

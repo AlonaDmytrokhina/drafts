@@ -7,7 +7,6 @@ export default function EditFanficPage() {
     const { formData, updateField, loadFicData, submitUpdate } = useCreateFicStore();
 
     useEffect(() => {
-        // Тут має бути запит до API для отримання даних фанфіка
         const fetchFic = async () => {
             const response = await fetch(`/api/fanfics/${id}`);
             const data = await response.json();
@@ -19,9 +18,8 @@ export default function EditFanficPage() {
     return (
         <div className="create-fic-container">
             <h1>Редагування: {formData.title}</h1>
-            <form onSubmit={/* Ваш метод updateFic */}>
-                {/* Використовуйте ті ж секції, що й у CreateFanficPage,
-                    але БЕЗ поля "Перший розділ" */}
+            <form onSubmit={}>
+
                 <section className="form-section">
                     <h3>Основна інформація</h3>
                     <input
@@ -33,7 +31,6 @@ export default function EditFanficPage() {
                         onChange={(e) => updateField("summary", e.target.value)}
                     />
                 </section>
-                {/* ... секція з тегами та обкладинкою */}
                 <button type="submit" className="btn-primary">Зберегти зміни</button>
             </form>
         </div>

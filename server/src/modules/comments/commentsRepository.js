@@ -3,11 +3,17 @@ import { pool } from "../../config/db.js";
 
 export const createComment = async ({content, chapterId, userId}) => {
     const query = `
-        INSERT INTO comments (
-            user_id, content, chapter_id
+        WITH inserted_comment AS (
+            INSERT INTO comments (user_id, content, chapter_id)
+                VALUES ($1, $2, $3)
+                RETURNING *
         )
-        VALUES ($1,$2,$3)
-        RETURNING *
+        SELECT
+            ic.*,
+            u.username,
+            u.avatar_url
+        FROM inserted_comment ic
+                 JOIN users u ON u.id = ic.user_id;
     `
 
     const { rows } = await pool.query(query,
@@ -23,16 +29,16 @@ export const createComment = async ({content, chapterId, userId}) => {
 
 export const getCommentsByChapter = async (chapterId) => {
     const query = `
-        SELECT c.*, u.username
+        SELECT c.*, u.username, u.avatar_url
         FROM comments c
                  JOIN users u ON u.id = c.user_id
         WHERE c.chapter_id = $1
-        ORDER BY c.created_at;
+        ORDER BY c.created_at DESC;
     `;
 
     const { rows } = await pool.query(query,
         [
-            chapterId,
+            chapterId
         ]
     );
 

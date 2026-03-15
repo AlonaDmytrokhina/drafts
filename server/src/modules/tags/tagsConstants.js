@@ -1,6 +1,5 @@
 export const TAG_TYPES = Object.freeze([
     'Fandom',
-    //'Category',
     'Character',
     'Relationship',
     'Additional'

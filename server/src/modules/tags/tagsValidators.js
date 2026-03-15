@@ -1,4 +1,4 @@
-import { TAG_TYPES, ALLOWED_CATEGORIES } from './tagsConstants.js';
+import { TAG_TYPES } from './tagsConstants.js';
 import { TagValidationError } from './tagsErrors.js';
 
 export const validateBase = ({ name, type }) => {
@@ -17,12 +17,6 @@ export const validateBase = ({ name, type }) => {
 
 export const validateByType = (name, type) => {
     switch (type) {
-        // case 'Category':
-        //     if (!ALLOWED_CATEGORIES.includes(name)) {
-        //         throw new TagValidationError('Invalid category');
-        //     }
-        //     break;
-
         case 'Relationship':
             if (!/[\/&]/.test(name)) {
                 throw new TagValidationError(

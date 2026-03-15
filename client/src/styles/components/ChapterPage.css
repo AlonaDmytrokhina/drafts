@@ -43,7 +43,6 @@
     pointer-events: none;
 }
 
-/* Заголовок */
 .chapter-header {
     text-align: center;
     margin-bottom: 3rem;
@@ -64,19 +63,19 @@
     margin: 0 10px;
 }
 
-/* Текст розділу (Найважливіша частина) */
+
 .chapter-content {
-    font-size: 1rem; /* Комфортний розмір */
-    line-height: 1.5;   /* Великий міжрядковий інтервал */
+    font-size: 1rem;
+    line-height: 1.5;
     letter-spacing: 0.01rem;
     word-wrap: break-word;
 }
 
 .chapter-content p {
-    margin-bottom: 1.5rem; /* Відступи між абзацами */
+    margin-bottom: 1.5rem;
 }
 
-/* Нижня частина */
+
 .chapter-footer {
     margin-top: 4rem;
     padding-top: 2rem;
@@ -89,12 +88,12 @@
     padding: 15px;
 }
 
-/* Адаптивність */
+
 @media (max-width: 600px) {
     .chapter-title {
         font-size: 1.8rem;
     }
     .nav-btn span {
-        display: none; /* Ховаємо текст на мобільних, залишаємо іконки */
+        display: none;
     }
 }

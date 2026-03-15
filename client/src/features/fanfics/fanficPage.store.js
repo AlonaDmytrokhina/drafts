@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { toggleLike, toggleBookmark, getFanfic } from "./api";
+import { toggleLike, toggleBookmark, getFanfic, deleteFanficById } from "./api";
 
 export const useFanficPageStore = create((set, get) => ({
 
@@ -64,4 +64,20 @@ export const useFanficPageStore = create((set, get) => ({
             console.error("Помилка закладки:", err);
         }
     },
+
+    deleteFanfic: async (id) => {
+        set({ loading: true, error: null });
+
+        try {
+            await deleteFanficById(id);
+
+            set({ currentFic: null, loading: false });
+
+            return true;
+        } catch (err) {
+            console.error("Помилка видалення:", err);
+            set({ error: "Не вдалося видалити фанфік", loading: false });
+            return false;
+        }
+    }
 }));

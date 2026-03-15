@@ -1,14 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
-import Login from "../features/auth/Login";
-import FanficList from "../features/fanfics/components/FanficList";
-import FanficPage from "../features/fanfics/components/FanficPage";
+import Login from "@/features/auth/Login";
+import FanficList from "@/features/fanfics/components/FanficList";
+import FanficPage from "@/features/fanfics/components/FanficPage";
 import ChapterPage from "@/features/chapters/components/ChapterPage";
-import Layout from "@/shared//ui/Layout";
-import WelcomePage from "../features/welcome/WelcomePage";
-import Register from "../features/auth/Register";
+import Layout from "@/shared/ui/Layout";
+import WelcomePage from "@/features/welcome/WelcomePage";
+import Register from "@/features/auth/Register";
 import ProfilePage from "@/features/users/components/ProfilePage";
 import CreateFanficPage from "@/features/fanfics/components/CreateFanficPage";
 import AddChapterPage from "@/features/chapters/components/AddChapterPage";
+import RecommendationsPage from "@/features/recommendations/RecommendationsPage";
 
 export const router = createBrowserRouter([
     {
@@ -26,6 +27,7 @@ export const router = createBrowserRouter([
             { path: "/fanfics/:fanficId/chapters/:chapterId", element: <ChapterPage /> },
             { path: "/fanfics/:fanficId/chapters/new", element: <AddChapterPage /> },
             { path: "/fanfics/new", element: <CreateFanficPage /> },
+            { path: "/recommendations", element: <RecommendationsPage /> },
         ],
     },
 ]);

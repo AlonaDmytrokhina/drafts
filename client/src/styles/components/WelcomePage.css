@@ -31,13 +31,16 @@
     width: 100vw;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     scroll-snap-align: start;
     flex-shrink: 0;
+    gap: 3rem;
 }
 
 .welcome-logo {
+    gap:0;
+    justify-content: center;
     display: flex;
     flex-direction: row;
     font-family: var(--font-main-name);
@@ -58,6 +61,25 @@
     padding: 0 10%;
     box-sizing: border-box;
     color: var(--color-main-green);
+}
+
+.goal-content {
+    flex-wrap: wrap;
+}
+
+.goal-dorian img {
+    max-width: 700px;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.dorian-span {
+    color: var(--color-additional-orange);
+}
+
+.write-span {
+    color: var(--color-main-yellow);
 }
 
 .welcome-register {
@@ -105,7 +127,7 @@
 }
 
 .register-imgs img:hover {
-    transform: translateY(-10px) rotate(2deg); /* Легкий грайливий ефект */
+    transform: translateY(-10px) rotate(2deg);
 }
 
 .welcome-register button {
@@ -116,6 +138,21 @@
     color: var(--color-main-brown);
 }
 
+
+.welcome-dorian-section {
+    align-items: center;
+    justify-content: space-around;
+}
+
+.welcome-dorian-section .goal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.welcome-dorian-section button {
+    align-self: flex-start;
+}
 
 
 @media (max-width: 768px) {

@@ -1,16 +1,25 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect } from "react";
-import { ChevronLeft, ChevronRight, List } from "lucide-react"; // Іконки для зручності
+import { ChevronLeft, ChevronRight, List } from "lucide-react";
 import { useChapterPageStore } from "@/features/chapters/chapters.store";
 import "@/styles/components/ChapterPage.css";
+import CommentsSection from "@/features/comments/components/CommentsSection";
+import useTimer from "@/hooks/useTimer"
 
 export default function ChapterPage() {
     const { fanficId, chapterId } = useParams();
     const {
         currentChapter, error, loading,
         fetchChapterById, clearCurrentChapter,
-        getPrevChapterId, getNextChapterId
+        getPrevChapterId, getNextChapterId,
+        recordReading
     } = useChapterPageStore();
+
+    useTimer(fanficId, chapterId, (fId, cId, time) => {
+        if (time >= 20) {
+            recordReading(fId, cId, time);
+        }
+    });
 
     useEffect(() => {
         fetchChapterById(fanficId, chapterId);
@@ -63,6 +72,8 @@ export default function ChapterPage() {
                     <p key={index}>{paragraph}</p>
                 ))}
             </article>
+
+            <CommentsSection ></CommentsSection>
 
             <footer className="chapter-footer">
                 <div className="nav-controls full-width">

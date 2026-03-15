@@ -1,21 +1,21 @@
 import { useFanficsStore } from "@/features/fanfics/fanfics.store";
 import "@/styles/components/CategoryPanel.css";
-import { useNavigate, useLocation } from "react-router-dom";
+import {useNavigate, useLocation, useSearchParams} from "react-router-dom";
 
 
 const GENRES = [
-    { id: 1, name: 'Romance' },
-    { id: 2, name: 'Fantasy' },
-    { id: 3, name: 'Drama' },
-    { id: 4, name: 'Horror' },
-    { id: 1, name: 'Romance' },
-    { id: 2, name: 'Fantasy' },
-    { id: 3, name: 'Drama' },
-    { id: 4, name: 'Horror' },
-    { id: 1, name: 'Romance' },
-    { id: 2, name: 'Fantasy' },
-    { id: 3, name: 'Drama' },
-    { id: 4, name: 'Horror' }
+    { id: 76, name: 'Наруто' },
+    { id: 54, name: 'Драма' },
+    { id: 117, name: 'Флаф' },
+    { id: 52, name: 'Ангст' },
+    { id: 86, name: 'Undertale' },
+    { id: 71, name: 'Подорож у часі' },
+    { id: 93, name: 'AU' },
+    { id: 107, name: 'Оріджинал' },
+    { id: 96, name: 'Аватар Аанг' },
+    { id: 20, name: 'Щасливий фінал' },
+    { id: 61, name: 'Гаррі Поттер' },
+    { id: 74, name: 'Магія' }
 ];
 
 export const CategoryPanel = ({ onSelect }) => {
@@ -26,15 +26,31 @@ export const CategoryPanel = ({ onSelect }) => {
     const setTags = useFanficsStore((s) => s.setTags);
     const resetFanfics = useFanficsStore((s) => s.resetFanfics);
 
+    const [searchParams, setSearchParams] = useSearchParams();
     const isFanficPath = () => {
         return currentPath === '/fanfics';
     }
 
-    const handleSelect = (ids) => {
-        if(!isFanficPath()){
-            navigate('/fanfics');
+    const selectedTagsFromUrl = searchParams.getAll("tag").map(Number);
+
+    const handleSelect = (id) => {
+        const newParams = new URLSearchParams(searchParams);
+
+        if (id === null) {
+            newParams.delete("tag");
+        } else {
+            newParams.delete("tag");
+            newParams.set("tag", id);
         }
-        setTags(ids);
+
+        newParams.set("page", "1");
+
+        if (!isFanficPath()) {
+            navigate(`/fanfics?${newParams.toString()}`);
+        } else {
+            setSearchParams(newParams);
+        }
+
         if (onSelect) onSelect();
     };
 
@@ -43,7 +59,7 @@ export const CategoryPanel = ({ onSelect }) => {
             <div className="category-panel_container">
                 <button
                     className={`category-item ${selectedTagsId.length === 0 && isFanficPath() ? 'active' : ''}`}
-                    onClick={() => handleSelect([])}
+                    onClick={() => handleSelect(null)}
                 >
                     Усі
                 </button>

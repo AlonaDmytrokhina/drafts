@@ -62,7 +62,7 @@ export const useCreateFicStore = create((set, get) => ({
     submitFic: async () => {
         set({ loading: true, error: null });
         try {
-            const { formData, coverFile } = get(); // Отримуємо все необхідне один раз
+            const { formData, coverFile } = get();
             const data = new FormData();
 
             Object.keys(formData).forEach(key => {
@@ -73,14 +73,11 @@ export const useCreateFicStore = create((set, get) => ({
 
             data.append("tags", JSON.stringify(formData.tags));
 
-            // 2. Додаємо файл обкладинки, якщо він вибраний
             if (coverFile) {
-                data.append("cover", coverFile); // "cover" має збігатися з назвою в upload.single("cover") на бекенді
+                data.append("cover", coverFile);
             } else {
                 set({ coverFile: "testCover.jpg" });
             }
-
-            formData.tags.forEach(tag => console.log(tag.name, tag.type));
 
             const response = await createFanfic(data);
 

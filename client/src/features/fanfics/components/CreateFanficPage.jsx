@@ -38,7 +38,6 @@ export default function CreateFanficPage() {
                     <button type="submit" disabled={loading} className="btn-primary">
                         {loading ? "Публікація..." : "Опублікувати"}
                     </button>
-                    {/*<button type="button" className="btn-secondary">Чернетка</button>*/}
                 </div>
             </form>
         </div>

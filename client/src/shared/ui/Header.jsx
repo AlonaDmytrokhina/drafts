@@ -33,7 +33,10 @@ export default function Header() {
         <>
             <header className="header">
                 <div className="header_left">
-                    <Menu size={32} className="icon" />
+                    <span
+                        className="logo"
+                        onClick={() => navigate("/")}
+                    >Drafts</span>
                     <button
                         className={`header_btn ${isCategoryOpen ? 'active' : ''}`}
                         onClick={() => setIsCategoryOpen(!isCategoryOpen)}
@@ -72,7 +75,7 @@ export default function Header() {
                             </div>
 
                             <div title={"До бібліотеки"}>
-                                <Sparkles size={24} className="icon" />
+                                <Sparkles size={24} className="icon" onClick={() => navigate("/recommendations")}/>
                             </div>
 
                             <div
@@ -80,11 +83,7 @@ export default function Header() {
                                 onClick={() => navigate(`/profile/${user.username}`)}
                                 title={"Профіль"}
                             >
-                                {user.avatar_url ? (
-                                    <img src={user.avatar_url} alt={user.username} />
-                                ) : (
-                                    <User size={24} className="icon" />
-                                )}
+                                <User size={24} className="icon" />
                             </div>
 
                             <div title={"Вийти"}>

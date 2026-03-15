@@ -1,16 +1,32 @@
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import { useParams, Link } from "react-router-dom";
-import { Heart, Bookmark, Feather } from "lucide-react";
+import { Heart, Bookmark, Feather, Trash } from "lucide-react";
 import "@/styles/components/FicPage.css";
 import "@/styles/components/Actions.css";
 import {useAuthStore} from "@/features/auth/auth.store";
 import {useFanficPageStore} from "@/features/fanfics/fanficPage.store";
+import { ConfirmModal} from "@/shared/ui/ConfirmModal";
+import {useNavigate} from "react-router-dom";
 
 export default function FanficPage() {
+    const navigate = useNavigate();
     const { id } = useParams();
-    const { currentFic, loading, error, fetchFanficById, clearCurrentFic, toggleLike, toggleBookmark } = useFanficPageStore();
+    const { currentFic, loading, error, fetchFanficById, clearCurrentFic, toggleLike, toggleBookmark, deleteFanfic } = useFanficPageStore();
     const user = useAuthStore((s) => s.user);
     const isLoggedIn = !!user;
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleDelete = () => {
+        setIsOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        setIsOpen(false);
+        const success = await deleteFanfic(currentFic.id);
+        if (success) {
+            navigate("/fanfics");
+        }
+    };
 
     useEffect(() => {
         fetchFanficById(id);
@@ -93,6 +109,18 @@ export default function FanficPage() {
                                 </button>
                             </Link>
                         }
+
+                        {isMe &&
+                            <button
+                                className={`action-btn btn-delete`}
+                                title={"Видалити"}
+                                onClick={handleDelete}
+                            >
+                                <Trash
+                                    size={30}
+                                />
+                            </button>
+                        }
                     </div>
                 </div>
             </header>
@@ -106,7 +134,13 @@ export default function FanficPage() {
                 </div>
                 <div className="fic-page_tags">
                     {currentFic.tags?.map(tag => (
-                        <span key={tag.id} className="tag-badge">#{tag.name}</span>
+                        <Link
+                            key={tag.id}
+                            to={`/fanfics?tag=${tag.id}`}
+                            className="tag-badge"
+                        >
+                            <span key={tag.id}>#{tag.name}</span>
+                        </Link>
                     ))}
                 </div>
             </section>
@@ -126,12 +160,19 @@ export default function FanficPage() {
                             className="chapter-item"
                         >
                             <span className="chapter-number">{chapter.position}.</span>
-                            <span className="chapter-title">{chapter.title}</span>
+                            <span className="chapter-ti">{chapter.title}</span>
                             <span className="chapter-date">{new Date(chapter.created_at).toLocaleDateString()}</span>
                         </Link>
                     ))}
                 </div>
             </section>
+
+            <ConfirmModal
+                isOpen={isOpen}
+                message="Ви впевнені, що хочете видалити фанфік?"
+                onConfirm={confirmDelete}
+                onCancel={() => setIsOpen(false)}
+            />
         </div>
     );
 }

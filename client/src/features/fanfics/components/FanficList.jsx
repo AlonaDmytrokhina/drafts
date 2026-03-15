@@ -1,22 +1,35 @@
-import "../../../styles/components/FanficList.css";
+import "@/styles/components/FanficList.css";
 import { useEffect } from "react";
 import { FicCard } from "./FicCard";
 import { useFanficsStore } from "../fanfics.store";
 import {useAuthStore} from "@/features/auth/auth.store";
 import {useSearchParams} from "react-router-dom";
 import {Pagination} from "@/shared/ui/Pagination";
+import {FanficFilters} from "@/features/fanfics/components/FanficFilters";
 
 export default function FanficList() {
     const [searchParams] = useSearchParams();
-    const query = searchParams.get("q") || "";
 
-    const { list, loading, error, fetchFanfics, currentPage, totalPages, setSearch, resetFanfics } = useFanficsStore();
+    const { list, loading, error, fetchFanfics, currentPage, totalPages, setSearch, resetFanfics, setTags } = useFanficsStore();
 
     useEffect(() => {
-        setSearch(query);
-        fetchFanfics(1);
+        const query = searchParams.get("q") || "";
+        const tags = searchParams.getAll("tag").map(Number);
+        const rating = searchParams.get("rating") || "";
+        const status = searchParams.get("status") || "";
+        const relationship = searchParams.get("relationship") || "";
+        const page = Number(searchParams.get("page")) || 1;
+
+        useFanficsStore.setState({
+            search: query,
+            selectedTagsId: tags,
+            filters: { rating, status, relationship }
+        });
+
+        fetchFanfics(page);
         return () => resetFanfics();
-    }, [query, setSearch, fetchFanfics, resetFanfics]);
+
+    }, [searchParams, fetchFanfics, resetFanfics]);
 
     const toggleLike = useFanficsStore((s) => s.toggleLike);
     const toggleBookmark = useFanficsStore((s) => s.toggleBookmark);
@@ -26,6 +39,9 @@ export default function FanficList() {
 
     return (
         <div className="FancList">
+
+            <FanficFilters/>
+
             <section className="fanfic-list">
                 {list.map((fanfic) => (
                     <FicCard key={fanfic.id} fanfic={fanfic} onLike={toggleLike} onBookmark={toggleBookmark} />

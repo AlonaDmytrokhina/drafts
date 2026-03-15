@@ -3,7 +3,14 @@ import {getUserById} from "./usersService.js";
 
 export const patchMe = async (req, res, next) => {
   try {
-    const data = await usersService.patchUser(req.user, req.body);
+      const updateData = {
+          bio: req.body.bio,
+      };
+
+      if (req.file) {
+          updateData.avatar_url = `/uploads/avatars/${req.file.filename}`;
+      }
+    const data = await usersService.patchUser(req.user, updateData);
     res.json(data);
   } catch (error) {
     next(error);

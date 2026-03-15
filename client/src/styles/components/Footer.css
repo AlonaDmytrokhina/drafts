@@ -13,16 +13,16 @@
 
 .footer_links {
     display: flex;
-    flex-wrap: wrap; /* Дозволяє посиланням переноситися, якщо їх багато */
+    flex-wrap: wrap;
     justify-content: center;
     margin-top: 10px;
-    gap: 20px;       /* Збільшений відступ для зручності натискання пальцем */
+    gap: 20px;
 }
 
-/* Медіа-запит для зовсім маленьких екранів */
+
 @media (max-width: 480px) {
     .footer_links {
-        flex-direction: column; /* На дуже вузьких екранах посилання стають в стовпчик */
+        flex-direction: column;
         gap: 12px;
     }
 }

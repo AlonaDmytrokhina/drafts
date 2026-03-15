@@ -60,7 +60,6 @@ export const useAuthStore = create((set, get) => ({
             return;
         }
 
-
         try {
             const { data } = await getMe();
             set({ user: data, token, loading: false });
@@ -69,4 +68,7 @@ export const useAuthStore = create((set, get) => ({
             set({ user: null, token: null, loading: false });
         }
     },
+
+    updateUser: (updatedUser) =>
+        set({ user: updatedUser }),
 }));

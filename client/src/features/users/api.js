@@ -4,10 +4,15 @@ import api from "@/shared/api/axios";
 export const getUserByUsername = (username) =>
     api.get(`/users/${username}`);
 
-export const updateMe = (data) =>
-    api.patch("/users/me", data);
+export const updateMe = async (formData) => {
+    return api.patch("/users/me", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+};
 
-export const deleteMe = (id) =>
+export const deleteMe = () =>
     api.delete(`/users/me`);
 
 export const getUserWorks = (username, page = 1, limit = 10) => {

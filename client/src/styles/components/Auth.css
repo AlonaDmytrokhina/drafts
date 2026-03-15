@@ -51,7 +51,7 @@
     margin-top: 50px;
 }
 
-/* Основна форма тепер просто контейнер для полів та блоку дій */
+
 .input-form {
     display: flex;
     flex-direction: column;
@@ -60,23 +60,23 @@
     gap: 20px;
 }
 
-/* Блок, який містить кнопку та посилання */
+
 .auth-actions {
-    margin-top: auto; /* Штовхає весь блок вниз */
+    margin-top: auto;
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Відступ між кнопкою та текстом "Зареєструватися" */
+    gap: 15px;
     width: 100%;
 }
 
-/* Прибираємо жорсткий margin у кнопки, бо тепер за відступи відповідає gap */
+
 .input-form button {
-    margin-top: 20px; /* Мінімальний відступ зверху, якщо контенту багато */
+    margin-top: 20px;
     width: 100%;
 }
 
 .auth-switch {
     text-align: center;
-    margin: 0; /* Прибираємо зайві відступи */
+    margin: 0;
     padding-bottom: 10px;
 }

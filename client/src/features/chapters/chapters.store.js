@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getChapter, getAllChapters } from "./api";
+import { getChapter, getAllChapters, recordReadingHistory } from "./api";
 
 export const useChapterPageStore = create((set, get) => ({
     chapters: [],
@@ -47,4 +47,17 @@ export const useChapterPageStore = create((set, get) => ({
     },
 
     clearCurrentChapter: () => set({ currentChapter: null, chapters: [], error: null }),
+
+
+    recordReading: async (fanficId, chapterId, readTime) => {
+        try {
+            await recordReadingHistory({
+                fanficId: parseInt(fanficId),
+                chapterId: parseInt(chapterId),
+                readTime
+            });
+        } catch (err) {
+            console.error("Failed to record history", err);
+        }
+    }
 }));

@@ -13,7 +13,6 @@ export const recordReading = async ({
         return;
     }
 
-    //максимальний час
     const safeReadTime = Math.min(readTime, 60 * 60);
 
     await readingHistoryRepository.insertReadingEvent({

@@ -15,7 +15,15 @@
 .header_left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 3rem;
+}
+
+.logo {
+    font-family: var(--font-main-name);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--color-bg-elem);
+    cursor: pointer;
 }
 
 

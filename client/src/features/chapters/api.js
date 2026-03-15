@@ -5,4 +5,4 @@ export const getChapter = (fanficId, chapterId) => api.get(`/fanfics/${fanficId}
 
 export const addChapter = (fanficId, data) => api.post(`/fanfics/${fanficId}/chapters`, data);
 
-
+export const recordReadingHistory = (data) => api.post('/reading-history', data);

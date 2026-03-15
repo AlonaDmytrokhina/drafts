@@ -1,5 +1,5 @@
 import { RouterProvider } from "react-router-dom";
-import { router } from "./router";
+import { router } from "./providers/router";
 import { useAuthStore } from "@/features/auth/auth.store";
 import { useEffect } from "react";
 
