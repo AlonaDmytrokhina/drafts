@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model bookmarks {
+  user_id    Int
+  fanfic_id  Int
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  fanfics    fanfics   @relation(fields: [fanfic_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_id, fanfic_id])
+  @@index([user_id], map: "idx_bookmarks_user")
+}
+
+model chapters {
+  id              Int               @id @default(autoincrement())
+  fanfic_id       Int
+  title           String?           @db.VarChar(255)
+  content         String
+  position        Int
+  created_at      DateTime?         @default(now()) @db.Timestamptz(6)
+  fanfics         fanfics           @relation(fields: [fanfic_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  comments        comments[]
+  reading_history reading_history[]
+
+  @@unique([fanfic_id, position])
+  @@index([fanfic_id], map: "idx_chapters_fanfic")
+}
+
+model comments {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  content    String
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  chapter_id Int?
+  chapters   chapters? @relation(fields: [chapter_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_comments_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model fanfics {
+  id              Int                   @id @default(autoincrement())
+  title           String                @db.VarChar(255)
+  summary         String?
+  language        String?               @db.VarChar(50)
+  image_url       String?
+  words_count     Int?
+  rating          String?               @db.VarChar(20)
+  status          String?               @db.VarChar(20)
+  warnings        String?               @db.VarChar(50)
+  author_id       Int
+  created_at      DateTime?             @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime?             @default(now()) @db.Timestamptz(6)
+  pages           Int?                  @default(dbgenerated("ceiling(((COALESCE(words_count, 0))::numeric / 250.0))"))
+  relationship    relationship_category @default(Gen)
+  ao3_id          String?               @unique(map: "unique_ao3_id") @db.VarChar(50)
+  cluster         String?               @db.VarChar(30)
+  bookmarks       bookmarks[]
+  chapters        chapters[]
+  users           users                 @relation(fields: [author_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  fanfics_tags    fanfics_tags[]
+  likes           likes[]
+  reading_history reading_history[]
+
+  @@index([author_id], map: "idx_fanfics_author")
+  @@index([created_at], map: "idx_fanfics_created_at")
+  @@index([rating], map: "idx_fanfics_rating")
+  @@index([status], map: "idx_fanfics_status")
+}
+
+model fanfics_tags {
+  fanfic_id Int
+  tag_id    Int
+  fanfics   fanfics @relation(fields: [fanfic_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tags      tags    @relation(fields: [tag_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([fanfic_id, tag_id])
+  @@index([fanfic_id], map: "idx_fanfics_tags_fanfic")
+  @@index([tag_id], map: "idx_fanfics_tags_tag")
+}
+
+model likes {
+  user_id    Int
+  fanfic_id  Int
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  fanfics    fanfics   @relation(fields: [fanfic_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_id, fanfic_id])
+  @@unique([user_id, fanfic_id], map: "idx_likes_unique")
+  @@index([fanfic_id], map: "idx_likes_fanfic")
+  @@index([fanfic_id], map: "idx_likes_fanfic_id")
+  @@index([user_id], map: "idx_likes_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model reading_history {
+  user_id      Int
+  fanfic_id    Int
+  chapter_id   Int?
+  read_time    Int?
+  last_read_at DateTime? @default(now()) @db.Timestamptz(6)
+  chapters     chapters? @relation(fields: [chapter_id], references: [id], onUpdate: NoAction)
+  fanfics      fanfics   @relation(fields: [fanfic_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users        users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_id, fanfic_id])
+  @@index([fanfic_id], map: "idx_reading_history_fanfic")
+  @@index([last_read_at], map: "idx_reading_history_last_read")
+  @@index([user_id], map: "idx_reading_history_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tags {
+  id                Int                @id @default(autoincrement())
+  name              String             @db.VarChar(100)
+  type              String?            @db.VarChar(20)
+  relationship_type relationship_type?
+  fanfics_tags      fanfics_tags[]
+
+  @@unique([name, type], map: "tags_name_type_idx")
+  @@unique([name, type], map: "tags_name_type_unique")
+}
+
+model users {
+  id                 Int               @id @default(autoincrement())
+  username           String            @unique @db.VarChar(50)
+  email              String            @unique @db.VarChar(255)
+  password_hash      String            @db.VarChar(255)
+  avatar_url         String?
+  bio                String?
+  is_admin           Boolean?          @default(false)
+  created_at         DateTime?         @default(now()) @db.Timestamptz(6)
+  preference_cluster String?           @db.VarChar(30)
+  bookmarks          bookmarks[]
+  comments           comments[]
+  fanfics            fanfics[]
+  likes              likes[]
+  reading_history    reading_history[]
+
+  @@index([email], map: "idx_users_email")
+  @@index([username], map: "idx_users_username")
+}
+
+enum relationship_category {
+  F_F   @map("F/F")
+  F_M   @map("F/M")
+  Gen
+  M_M   @map("M/M")
+  Multi
+  Other
+}
+
+enum relationship_type {
+  F_F   @map("F/F")
+  F_M   @map("F/M")
+  M_M   @map("M/M")
+  Other
+}

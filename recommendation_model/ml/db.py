@@ -1,8 +1,7 @@
 from sqlalchemy import create_engine
 import pandas as pd
-DB_URL = "postgresql://postgres:winx1708@localhost:5432/drafts_db"
 
-engine = create_engine('postgresql://postgres:winx1708@localhost:5432/drafts_db')
+engine = create_engine('postgresql://postgres:<user_name>@localhost:5432/<database_name>')
 
 def load_data():
 
@@ -34,4 +33,29 @@ def load_data():
     df = pd.read_sql(query, engine)
     df['score'] = df['score'] / df['score'].max()
 
+    return df
+
+
+def get_users_cluster(user_id):
+    query = """
+            SELECT id, preference_cluster
+            FROM users
+            WHERE id = %s \
+            """
+
+    df = pd.read_sql(query, engine, params=(user_id,))
+    return df
+
+
+def load_test(ids):
+
+    ids = [int(i) for i in ids]
+
+    query = """
+            SELECT id, cluster
+            FROM fanfics
+            WHERE id = ANY(%s) \
+            """
+
+    df = pd.read_sql(query, engine, params=(ids,))
     return df

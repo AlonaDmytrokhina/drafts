@@ -3,7 +3,6 @@ import * as fanficsRepository from '../fanfics/fanficsRepository.js';
 import { optionalAuth } from "../../middleware/authMiddleware.js";
 import axios from "axios";
 
-//TODO: розділити за логікою
 
 const router = Router();
 
@@ -15,7 +14,6 @@ router.get("/", optionalAuth, async (req, res) => {
 
         if(!userId){
             const fanfics = await fanficsRepository.getPopular({});
-            console.log(fanfics);
             return res.json({
                 data: fanfics
             });
